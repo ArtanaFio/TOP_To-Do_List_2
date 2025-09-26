@@ -1,5 +1,6 @@
 // Project Management Module
 // single responsibility purpose: manage projects that group todo-items
+// date format: "2025-03-18T00:00:00-05:00" or null
 
 class makeProject {
 
@@ -8,15 +9,14 @@ class makeProject {
     static MASTER_STORAGE = []; // Central Storage for ALL lists, including the default list
 
     constructor(title, description, dueDate, priority, label) {
-        if (!title) throw new Error("Title is required");
-        if (!priority) throw new Error("Priority is required");
-        if (!makeProject.PRIORITIES.has(priority)) throw new Error("Priority must be one of the approved options");
+        if (!title || !title.trim()) throw new Error("Title is required");
+        if (!priority || !makeProject.PRIORITIES.has(priority)) throw new Error("Invalid priority");
 
-        this.title = title;
-        this.description = description;
+        this.title = title.trim();
+        this.description = description ? description.trim() : "";
         this.dueDate = dueDate ? this.constructor.parseLocalDate(dueDate) : null; //date format is ISO 8601: YYYY-MM_DD
         this.priority = priority;
-        this.label = makeProject.LABELS.has(label) ? label : null;
+        this.label = label && makeProject.LABELS.has(label) ? label : null;
         this.tasks = [];
 
         makeProject.MASTER_STORAGE.push(this); // Add project to Master Storage
@@ -87,6 +87,23 @@ class makeProject {
         }
     }
 
+    addTask(task) {
+        if (!task || typeof task !== "object" || !("title" in task) || !("priority" in task)) throw new Error("Invalid task");
+        this.index = this.tasks.length;
+        this.tasks.push(task);
+    }
+
+    deleteTask(index) {
+        if (index >= 0 && index < this.tasks.length) {
+            this.tasks.splice(index, 1);
+            this.tasks.forEach((task, i) => {
+                task.index = i;
+            });
+        } else {
+            throw new Error("Invalid task index");
+        }
+    }
+
     deleteProject() {
         const index = makeProject.MASTER_STORAGE.indexOf(this);
         if (index > -1) {
@@ -97,7 +114,7 @@ class makeProject {
 
 export default makeProject;
 
-export function editProject(project, properties) {
+export function editBackendProject(project, properties) {
     project.editTitle(properties[0]);
     project.editDescription(properties[1]);
     project.editDueDate(properties[2]);
@@ -105,22 +122,11 @@ export function editProject(project, properties) {
     project.editLabel(properties[4]);
 };
 
-export function addTaskToProject(project, task) {
-    project.tasks.push(task);
+export function deleteBackEndTask(project, index, task) {
+    project.deleteTask(index);
+    task = null;
 };
 
-export function deleteTaskFromProject(project, task) {
-    project.tasks.splice(task, 1); // (task, 1), where task = index where I want to start removing items, and 1 is the number of items I want to remove.
-};
-
-// creation of a default project = new project(title, description, due date, priority, label), date format: "2025-03-18T00:00:00-05:00" or null
-export const defaultProject = new makeProject('Default List', 'List to begin tracking general todo items.', null, 'Important', null);
-
-export function createBackEndProject(title, description, date, priority, label) {
-    const newBackendProject = new makeProject(title, description, date, priority, label);
-
-    return newBackendProject;
-};
 
 
 // project completion status

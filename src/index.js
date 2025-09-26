@@ -1,22 +1,60 @@
 import makeProject from './modules/projects';
 import makeTodoItem from './modules/to-do_items';
-import { defaultProject, editProject, addTaskToProject, deleteTaskFromProject } from './modules/projects';
-import { editTask } from './modules/to-do_items';
+import { editBackendProject, deleteBackEndTask } from './modules/projects';
+import { editBackendTask } from './modules/to-do_items';
+import { titleCase, lowerCase, trim, getTodayDate } from './modules/utility';
 
+function backEndProjectManager() {
+    let project;
 
-console.log("----");
-console.log("TASK:");
-console.log("okay, next thing is to make sure that all the backend fuctions work without using any DOM maniputlation or even logic and utility functions");
-console.log("need to validate addTaskToProject so that only accepts proper tasks");
-console.log("need to clean up and validate to-do_items.js");
-if (process.env.NODE_ENV === "development") {
-    window.makeProject = makeProject;
-    window.makeTodoItem = makeTodoItem;
-    window.defaultProject = defaultProject;
-    window.editProject = editProject;
-    window.addTaskToProject = addTaskToProject;
-    window.deleteTaskFromProject = deleteTaskFromProject;
-    window.editTask = editTask;
-}
+    function createBackendProject(title, description, dueDate, priority, label) {
+        const properTitle = titleCase(trim(title));
+        const properDescription = lowerCase(trim(description));
+        project = new makeProject(properTitle, properDescription, dueDate, priority, label);
 
-//console.log(defaultProject);
+        return project;
+    };
+
+    // The default project should not be deleteable
+    const defaultProject = createBackendProject('default list', 'list to begin tracking general todo items.', null, 'Important', null);
+    console.log(defaultProject);
+
+    function deleteBackendProject(project) {
+        if (project === defaultProject) {
+            console.log("You cannot delete the default Project");
+        } else {
+            project.deleteProject();
+            project = null;
+        }
+        
+    };
+
+    let task;
+
+    function createBackendTask(title, description, dueDate, priority, project) {
+        const properTitle = titleCase(trim(title));
+        const properDescription = lowerCase(trim(description));
+        task = new makeTodoItem(properTitle, properDescription, dueDate, priority);
+
+        project.addTask(task);
+
+        return task;
+    };
+
+    if (process.env.NODE_ENV === "development") {
+        window.titleCase = titleCase;
+        window.lowerCase = lowerCase;
+        window.trim = trim;
+        window.getTodayDate = getTodayDate;
+        window.makeProject = makeProject;
+        window.makeTodoItem = makeTodoItem;
+        window.createBackendProject = createBackendProject;
+        window.editBackendProject = editBackendProject;
+        window.deleteBackendProject = deleteBackendProject;
+        window.createBackendTask = createBackendTask;
+        window.editBackendTask = editBackendTask;
+        window.deleteBackEndTask = deleteBackEndTask;
+        window.defaultProject = defaultProject;
+    }
+};
+backEndProjectManager();

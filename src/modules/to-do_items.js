@@ -3,17 +3,16 @@
 class makeTodoItem {
     static PRIORITIES = new Set(['Minor', 'Important', 'Urgent']);
 
-    constructor(index, title, description, dueDate, priority) {
-        if (!index) throw new Error("Index is required");
+    constructor(title, description, dueDate, priority) {
         if (!title) throw new Error("Title is required");
         if (!priority) throw new Error("Priority is required");
         if (!makeTodoItem.PRIORITIES.has(priority))  throw new Error("Priority must be one of the approved options");
 
-        this.index = index;
         this.title = title;
-        this.description = description;
+        this.description = description ? description.trim(): "";
         this.dueDate = dueDate ? this.constructor.parseLocalDate(dueDate) : null; // date object, default to null if not specified
         this.priority = priority;
+        this.index = null;
     }
 
     static parseLocalDate(dueDate) {
@@ -61,7 +60,7 @@ class makeTodoItem {
 
 export default makeTodoItem;
 
-export function editTask(task, title, description, dueDate, priority) {
+export function editBackendTask(task, title, description, dueDate, priority) {
     task.editTitle(title);
     task.editDescription(description);
     task.editDueDate(dueDate);
