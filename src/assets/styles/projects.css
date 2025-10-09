@@ -1,0 +1,160 @@
+:root {
+    --list-gap: 10px;
+}
+
+ul {
+    height: 100%;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--list-gap);
+}
+
+li {
+    font-size: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    padding: 3px;
+}
+
+li:first-of-type {
+    margin-top: var(--list-gap);
+}
+
+.pre-select {
+    font-weight: bold;
+    background-color: rgb(220, 255, 253);
+}
+
+.selected {
+    color: rgb(0, 129, 123);
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.flexy {
+    display: flex;
+}
+
+.gone {
+    display: none;
+}
+
+.project {
+    background-color: white;
+    width: 90%;
+    height: 90%;
+    flex-direction: column;
+}
+
+.detail-box {
+    background: rgb(148, 212, 210);
+    border: 1px solid transparent;
+}
+
+.project-button-div {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 10px 0px 10px;
+}
+
+button {
+    cursor: pointer;
+}
+
+.edit-button, .close-button {
+    font-size: 16px;
+    background-color: white;
+    border-radius: 50%;
+    padding: 5px;
+}
+
+.close-button {
+    font-weight: bold;
+}
+
+.project-title {
+    text-align: center;
+    border-bottom: 2px solid rgb(0, 97, 92);
+}
+
+.all-property-div {
+    display: flex;
+    flex-direction: row;
+    margin: 0 20px;
+    height: 40px;
+}
+
+.property-box {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    gap: 0.25rem;
+}
+
+.property-box:first-child {
+    flex: 3;
+}
+
+.property-header {
+    flex: 1;
+    font-size: 16px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+p {
+    font-size: 14px;
+    height: 100%;
+    display: flex;
+}
+
+.project-description {
+    flex: 4;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.too-much-text {
+    overflow-y: scroll;
+    align-items: flex-start;
+}
+
+.project-due-date {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.project-priority {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.task-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.task-button-box {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.task-area {
+    flex: 10;
+    border: 2px dashed blue;
+}
+
+.add-button {
+    font-size: 16px;
+    background-color: rgb(148, 212, 210);
+    padding: 5px;
+}

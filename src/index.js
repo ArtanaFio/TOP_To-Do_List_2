@@ -1,8 +1,13 @@
+import './assets/styles/main.css';
+import './assets/styles/projects.css';
+
 import makeProject from './modules/projects';
 import makeTodoItem from './modules/to-do_items';
 import { editBackendProject, deleteBackEndTask } from './modules/projects';
 import { editBackendTask } from './modules/to-do_items';
-import { titleCase, lowerCase, trim, getTodayDate } from './modules/utility';
+import { titleCase, lowerCase, trim, getTodayDate, convertDate } from './modules/utility';
+import { createPageLayout } from './modules/main_ui';
+import { panelList, createProject } from './modules/projects_DOM';
 
 function backEndProjectManager() {
     let project;
@@ -16,8 +21,7 @@ function backEndProjectManager() {
     };
 
     // The default project should not be deleteable
-    const defaultProject = createBackendProject('default list', 'list to begin tracking general todo items.', null, 'Important', null);
-    console.log(defaultProject);
+    const defaultProject = createBackendProject('default list', 'list to begin tracking general todo items. ', '2025-02-10', 'Important', null);
 
     function deleteBackendProject(project) {
         if (project === defaultProject) {
@@ -56,5 +60,23 @@ function backEndProjectManager() {
         window.deleteBackEndTask = deleteBackEndTask;
         window.defaultProject = defaultProject;
     }
+
+    return defaultProject;
 };
-backEndProjectManager();
+
+function userInterface() {
+    const pageSpace = document.getElementById('page-space');
+    const pageLayout = createPageLayout(pageSpace);
+    const defaultProject = backEndProjectManager();
+    const projectInterface = createProject(pageLayout.rightPanel);
+    console.log(defaultProject);
+    const listedDefaultProject = panelList(pageLayout.leftPanelContainer, projectInterface.project, projectInterface, defaultProject, convertDate);
+
+    // defaultProject.title, defaultProject.description, convertDate(defaultProject.dueDate), defaultProject.priority
+};
+userInterface();
+
+console.log('------------------------');
+//console.log("REMINDER: might have to reconsider how we set up the backendManager() and defaultProject to work with everything that is the user interface");
+//console.log("REMINDER: 10/6 finish initial css styling for project. Will clean up/improve styling later after connecting backend functions to frontend elements.");
+//console.log('REMINDER: 10/7 need to rethink my create/display project functions to think of how the close function should work because I want to create a generic project and populate it with the specific selected project information');

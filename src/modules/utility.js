@@ -21,3 +21,10 @@ export function getTodayDate() {
     const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
 };
+
+export function convertDate(longDate) {
+    const year = longDate.getFullYear();
+    const month = longDate.getMonth() + 1;
+    const day = longDate.getDate();
+    return `${month}/${day}/${year}`;
+};
