@@ -7,7 +7,7 @@ import { editBackendProject, deleteBackEndTask } from './modules/projects';
 import { editBackendTask } from './modules/to-do_items';
 import { titleCase, lowerCase, trim, getTodayDate, convertDate, dateForInput, convertCalendarDate } from './modules/utility';
 import { createPageLayout } from './modules/main_ui';
-import { createPanelList, addtoPanelList, applyProjectSelectionStyling, selectProject, displayProjectList, openEditProjectForm, removeError, createProject, createProjectEditForm, getProjectDetails, displayEditForm, editFrontProjectEdits, editFrontendProject, closeEditForm } from './modules/projects_DOM';
+import { createPanelList, addtoPanelList, applyProjectSelectionStyling, displayProjectList, openEditProjectForm, addErrorStyling, removeErrorStyling, createProject, createProjectEditForm, getProjectDetails, editFrontendProject, closeEditForm, createNewProjectForm, openNewProjectForm, closeNewProjectForm, getNewProject, clearInputs } from './modules/projects_DOM';
 
 function backEndProjectManager() {
     let project;
@@ -21,7 +21,7 @@ function backEndProjectManager() {
     };
 
     // The default project should not be deleteable
-    const defaultProject = createBackendProject('default list', 'list to begin tracking general todo items. ', '2025-02-10', 'Important', null);
+    const defaultProject = createBackendProject('default list', 'list to begin tracking general todo items. ', '2026-02-10', 'Important', null);
     //const testProject1 = createBackendProject('fake project 1', 'something', '2025-12-01', 'Minor', 'Daily');
     //const testProject2 = createBackendProject('fake project 2', 'something', '2025-12-02', 'Urgent', 'Weekly');
     //const testProject3 = createBackendProject('fake project 3', 'something', '2025-12-03', 'Minor', 'Monthly');
@@ -66,7 +66,9 @@ function backEndProjectManager() {
 
     return {
         defaultProject: defaultProject,
-        editBackendProject: editBackendProject
+        editBackendProject: editBackendProject,
+        project: project,
+        createBackendProject: createBackendProject
     };
 };
 
@@ -75,43 +77,69 @@ function userInterface() {
     const pageLayout = createPageLayout(pageSpace);
     const defaultProject = backEndProjectManager().defaultProject;
     const projectEditForm = createProjectEditForm(document.body);
+    const newProjectForm = createNewProjectForm(document.body);
     const projectInterface = createProject(pageLayout.rightPanel, projectEditForm);
     console.log(defaultProject);
     const panelList = createPanelList(pageLayout.leftPanelContainer);
     const listedDefaultProject = addtoPanelList(defaultProject, panelList);
-    applyProjectSelectionStyling(projectInterface.closeButton);
+    applyProjectSelectionStyling(panelList, projectInterface.closeButton);
     
-    const listedProjects = document.querySelectorAll('.project-name');
-    listedProjects.forEach(project => {
-        project.addEventListener('click', () => {
-            makeProject.MASTER_STORAGE.forEach((backendProject, index) => {
-                if(backendProject.title === project.textContent) {
-                    displayProjectList(projectInterface, backendProject, convertDate);
-                    console.log(selectProject(backendProject));
-                    projectEditForm.submitButton.addEventListener('click', () => {
-                        if (projectEditForm.titleInput.value === '') {
-                            projectEditForm.titleInput.classList.add('error-input');
-                        } else {
-                            editFrontendProject(projectInterface, projectEditForm, convertCalendarDate);
-                            backEndProjectManager().editBackendProject(backendProject, getProjectDetails(projectEditForm));
-                            closeEditForm(projectEditForm.editModule);
-                        }
-                        
-                    });
-                    //submitProjectEdits(projectEditForm.submitButton, projectEditForm, projectInterface, makeProject.MASTER_STORAGE, editBackendProject);
-                }
-            });
+    panelList.addEventListener('click', (e) => {
+        makeProject.MASTER_STORAGE.forEach((backendProject, index) => {
+            if (backendProject.title === e.target.textContent) {
+                displayProjectList(projectInterface, backendProject, convertDate);
+                projectEditForm.submitButton.addEventListener('click', () => {
+                    if (projectEditForm.titleInput.value === '') {
+                        addErrorStyling(projectEditForm);
+                    } else {
+                        editFrontendProject(projectInterface, projectEditForm, convertCalendarDate);
+                        backEndProjectManager().editBackendProject(backendProject, getProjectDetails(projectEditForm));
+                        closeEditForm(projectEditForm.editModule);
+                    }
+                });
+            }
         });
     });
 
     projectEditForm.editModule.addEventListener('click', () => {
         if (projectEditForm.titleInput.value !== '') {
-            removeError(projectEditForm);
+            removeErrorStyling(projectEditForm);
         }
     });
     
     openEditProjectForm(projectInterface.editButton, projectEditForm, projectInterface.projectTitle, makeProject.MASTER_STORAGE, dateForInput);
     // defaultProject.title, defaultProject.description, convertDate(defaultProject.dueDate), defaultProject.priority
+
+    pageLayout.addProjectButton.addEventListener('click', () => {
+        openNewProjectForm(newProjectForm);
+    });
+
+    newProjectForm.cancelButton.addEventListener('click', () => {
+        clearInputs(newProjectForm);
+        closeNewProjectForm(newProjectForm);
+    });
+
+    newProjectForm.submitButton.addEventListener('click', () => {
+        const newProjectDetails = getNewProject(newProjectForm);
+        if (newProjectForm.titleInput.value === '') {
+            addErrorStyling(newProjectForm);
+        } else {
+            console.log('before creating a new project:')
+            console.log(makeProject.MASTER_STORAGE);
+            const newProject = backEndProjectManager().createBackendProject(newProjectDetails.title, newProjectDetails.description, newProjectDetails.dueDate, newProjectDetails.priority, newProjectDetails.label);
+            console.log('after creating a new project');
+            console.log(makeProject.MASTER_STORAGE);
+            addtoPanelList(newProject, panelList);
+            closeNewProjectForm(newProjectForm);
+        }
+        
+    });
+
+    newProjectForm.module.addEventListener('click', () => {
+        if (newProjectForm.titleInput.value !== '') {
+            removeErrorStyling(newProjectForm);
+        }
+    });
 };
 userInterface();
 
@@ -129,8 +157,7 @@ console.log('------------------------');
 //console.log('REMINDER: 11/21 fix createProjectEditForm labelbox options because we do not want a not-option and we also want to display the correct label in the fill function');
 //console.log('REMINDER: 11/24 inside submitProjectEdits, figure out how to set up editBackendProject');
 // had created applyProjectSelectionStyling() to only handle styling that was originally in selectProject(), and deconstructed submitProjectEdits to move the event listener on the submit button directly to the entry point.
-
-
-//const listedDefaultProject = panelList(pageLayout.leftPanelContainer, projectInterface.project, projectInterface, projectEditForm, defaultProject, convertDate, dateForInput, convertCalendarDate, editBackendProject);
-//selectProject(panelList, projectInterface, defaultProject, convertDate);
-//let selectedProject = selectProject(projectInterface, makeProject.MASTER_STORAGE, convertDate);
+console.log('REMINDER: 11/25 Something is wrong with backEndProjectManager().createBackendProject. Whenever I submit a new project, it creates a new default project before the one I specified');
+//console.log('REMINDER: 11/25 the panel list also will not let me select the new project');
+//11/25 replaced the querySelectorAll('project-name') variable with event delegation to handle dynamic element changes since querSelectorAll is static and only captures elements at that specific point in the code.
+console.log('REMINDER: 11/25 fix the date format. Uncaught runtime error happens when I click the edit button on the new project. Uncaught error: Cannot read properties of null(reading "getFullYear")at utility.js:33 ---> dateForInput (utility.js:33:1), at fillProjectEditForm (projects.DOM.js:218:1), at eval (projects_DOM.js:49:1), at Array.forEach(anonymous), at HTMLButtonElement.eval (projects_DOM.js:46:1)');

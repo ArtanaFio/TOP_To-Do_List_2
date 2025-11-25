@@ -12,34 +12,33 @@ export function addtoPanelList(projectDetails, panelList) {
     const projectName = makeElement('li', '', 'project-name', projectDetails.title, panelList);
 };
 
-export function applyProjectSelectionStyling(closeProjectButton) {
-    const projects = document.querySelectorAll('.project-name');
-    projects.forEach(project => {
-        project.addEventListener('mouseenter', () => {
-            if(!project.classList.contains('selected')) {
-                project.classList.add('pre-select');
+export function applyProjectSelectionStyling(parentContainer, closeProjectButton) {
+    parentContainer.addEventListener('mouseenter', (e) => {
+        if (e.target.classList.contains('project-name')) {
+            if (!e.target.classList.contains('selected')) {
+                e.target.classList.add('pre-select');
             }
-        });
-        project.addEventListener('mouseleave', () => {
-            if(!project.classList.contains('selected')) {
-                project.classList.remove('pre-select');
+        }
+    }, true);
+
+    parentContainer.addEventListener('mouseleave', (e) => {
+        if (e.target.classList.contains('project-name')) {
+            if (!e.target.classList.contains('selected')) {
+                e.target.classList.remove('pre-select');
             }
-        });
-        project.addEventListener('click', () => {
-            project.classList.add('selected');
-            project.classList.remove('pre-select');
-        });
+        }
+    }, true);
+
+    parentContainer.addEventListener('click', (e) => {
+        if (e.target.classList.contains('project-name')) {
+            e.target.classList.add('selected');
+            e.target.classList.remove('pre-select');
+        }
 
         closeProjectButton.addEventListener('click', () => {
-            project.classList.remove('selected');
+            e.target.classList.remove('selected');
         });
     });
-
-};
-
-export function selectProject(backendProject) { //panelList, projectInterface, projectDetails, convertDate
-    return backendProject;
-
 };
 
 export function openEditProjectForm(editButton, editFormInterface, projectTitle, backendProjectStorage, dateForInput) {
@@ -243,18 +242,112 @@ export function editFrontendProject(projectInterface, editForm, convertCalendarD
     projectInterface.projectLabel.textContent = editForm.labelBox.value;
 };
 
-export function getProjectDetails(editFormInterface) {
-    const newProjectTitle = editFormInterface.titleInput.value;
-    const newProjectDescription = editFormInterface.descriptionInput.value;
-    const newProjectDueDate = editFormInterface.dueDateDropDownBox.value;
-    const newProjectPriority = editFormInterface.priorityBox.value;
-    const newProjectLabel = editFormInterface.labelBox.value;
+export function getProjectDetails(formInterface) {
+    const newProjectTitle = formInterface.titleInput.value;
+    const newProjectDescription = formInterface.descriptionInput.value;
+    const newProjectDueDate = formInterface.dueDateDropDownBox.value;
+    const newProjectPriority = formInterface.priorityBox.value;
+    const newProjectLabel = formInterface.labelBox.value;
     const newProjectDetails = [newProjectTitle, newProjectDescription, newProjectDueDate, newProjectPriority, newProjectLabel];
     return newProjectDetails;
 };
 
-export function removeError(editFormInterface) {
-    editFormInterface.titleInput.classList.remove('error-input');
+export function addErrorStyling(formInterface) {
+    formInterface.titleInput.classList.add('error-input');
 };
+
+export function removeErrorStyling(formInterface) {
+    formInterface.titleInput.classList.remove('error-input');
+};
+
+export function createNewProjectForm(container) {
+    const module = makeElement('div', '', 'transparent-box gone', '', container);
+    const formContainer = makeElement('div', '', 'form-container', '', module);
+    const form = makeElement('form', '', '', '', formContainer);
+    const formFieldset = makeElement('fieldset', '', '', '', form);
+    const formLegend = makeElement('legend', '', '', 'New Project Form', formFieldset); 
+    const propertyBox = makeElement('div', '', 'form-property-box', '', formFieldset);
+    const titleDiv = makeElement('div', '', 'form-property-div', '', propertyBox);
+    const titleLabel = makeLabel('', 'title', 'labels', 'Title:', titleDiv);
+    const titleInput = makeInput('input', 'title', 'text', 'title', 'regular-input', 'Do you have a title?', titleDiv);
+    const descriptionDiv = makeElement('div', '', 'form-property-div', '', propertyBox);
+    const descriptionLabel = makeLabel('', 'description', 'labels', 'Description:', descriptionDiv);
+    const descriptionInput = makeInput('textarea', 'description', '', 'description', 'textarea', 'Do you have a description?', descriptionDiv);
+    const dueDateDiv = makeElement('div', '', 'form-property-div', '', propertyBox);
+    const dueDateLabel = makeLabel('', 'dueDate', 'labels', 'Due Date:', dueDateDiv);
+    const dueDateDropDownBox = makeInput('input', 'dueDate', 'date', 'dueDate', 'drop-box', '', dueDateDiv);
+    const priorityDiv = makeElement('div', '', 'form-property-div', '', propertyBox);
+    const priorityLabel = makeLabel('', 'priority', 'labels', 'Priority:', priorityDiv);
+    const priorityBox = makeElement('select', '', 'drop-box', '', priorityDiv);
+    const priorityNotOption = makeNotAnOption(priorityBox);
+    const priorityOptions = ['Minor', 'Important', 'Urgent'];
+    priorityOptions.forEach(priorityType => {
+        const option = makeDropDownOptions(priorityType, priorityBox);
+    });
+
+    const labelDiv = makeElement('div', '', 'form-property-div', '', propertyBox);
+    const labelLabel = makeLabel('', 'label', 'labels', 'Label:', labelDiv);
+    const labelBox = makeElement('select', '', 'drop-box', '', labelDiv);
+    const labelNotOption = makeNotAnOption(labelBox);
+    const labelOptions = ['None', 'Daily', 'Weekly', 'Monthly', 'Yearly'];
+    labelOptions.forEach(labelType => {
+        const option = makeDropDownOptions(labelType, labelBox);
+    });
+    
+    const formButtonBox = makeElement('div', '', 'form-button-box', '', formFieldset);
+    const cancelButton = makeButton('', 'button', 'cancel-button', 'Cancel', formButtonBox);
+    
+    cancelButton.addEventListener('click', () => {
+        closeEditForm(module);
+    });
+    
+    const submitButton = makeButton('', 'button', 'submit-button', 'Submit', formButtonBox);
+
+    return {
+        module: module,
+        titleInput: titleInput,
+        descriptionInput: descriptionInput,
+        dueDateDropDownBox: dueDateDropDownBox,
+        priorityBox: priorityBox,
+        priorityNotOption: priorityNotOption,
+        priorityOptions: priorityOptions,
+        labelBox: labelBox,
+        labelNotOption: labelNotOption,
+        labelOptions: labelOptions,
+        cancelButton: cancelButton,
+        submitButton: submitButton
+    }
+};
+
+export function openNewProjectForm(newProjectFormInterface) {
+    newProjectFormInterface.module.classList.add('flexy');
+    newProjectFormInterface.module.classList.remove('gone');
+};
+
+export function closeNewProjectForm(newProjectFormInterface) {
+    newProjectFormInterface.module.classList.add('gone');
+    newProjectFormInterface.module.classList.remove('flexy');
+};
+
+export function clearInputs(formInterface) {
+    formInterface.titleInput.value = '';
+    formInterface.descriptionInput.value = '';
+    formInterface.dueDateDropDownBox.value = '';
+    formInterface.priorityBox.value = 'Minor';
+    formInterface.labelBox.value = 'None';
+};
+
+export function getNewProject(newProjectFormInterface) {
+    const newProjectDetails = {
+        title: newProjectFormInterface.titleInput.value,
+        description: newProjectFormInterface.descriptionInput.value,
+        dueDate: newProjectFormInterface.dueDateDropDownBox.value,
+        priority: newProjectFormInterface.priorityBox.value,
+        label: newProjectFormInterface.labelBox.value
+    }
+    return newProjectDetails;
+};
+
+
 
 
