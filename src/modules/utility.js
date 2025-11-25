@@ -28,3 +28,33 @@ export function convertDate(longDate) {
     const day = longDate.getDate();
     return `${month}/${day}/${year}`;
 };
+
+export function dateForInput(longDate) {
+    const year = longDate.getFullYear();
+    const month = longDate.getMonth() + 1;
+    const day = longDate.getDate();
+    let dateString;
+    if (month < 10) {
+        dateString = `${year}-0${month}-${day}`;
+    } else {
+        dateString = `${year}-${month}-${day}`;
+    }
+    return dateString;
+};
+
+export function convertCalendarDate(date) {
+    if (date === '') {
+        return date;
+    } else {
+        const year = date.slice(0,4);
+        let month;
+        const firstDigit = date.slice(5, 6);
+        if (firstDigit === '0') {
+            month = date.slice(6, 7);
+        } else {
+            month = date.slice(5, 7);
+        }
+        const day = date.slice(8, 10);
+        return `${month}/${day}/${year}`;
+    }
+};

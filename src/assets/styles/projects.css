@@ -73,15 +73,32 @@ button {
     font-weight: bold;
 }
 
+.title-label-div {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-bottom: 2px solid rgb(0, 97, 92);
+}
+
 .project-title {
     text-align: center;
-    border-bottom: 2px solid rgb(0, 97, 92);
+    grid-column: 2 / 3;
+}
+
+.project-label {
+    background-color: rgb(0, 97, 92);
+    color: white;
+    grid-column: 3 / 4;
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    padding: 5px;
+    margin-bottom: 2px;
+    border-radius: 50px;
 }
 
 .all-property-div {
     display: flex;
     flex-direction: row;
-    margin: 0 20px;
     height: 40px;
 }
 
@@ -98,7 +115,7 @@ button {
 
 .property-header {
     flex: 1;
-    font-size: 16px;
+    font-size: 14px;
     height: 100%;
     display: flex;
     align-items: center;
@@ -109,6 +126,7 @@ p {
     font-size: 14px;
     height: 100%;
     display: flex;
+    margin: 0 5px;
 }
 
 .project-description {
@@ -157,4 +175,109 @@ p {
     font-size: 16px;
     background-color: rgb(148, 212, 210);
     padding: 5px;
+}
+
+.transparent-box {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 97, 92, 0.500);
+}
+
+.form-container {
+    background-color: white;
+    width: 55%;
+    height: 55%;
+    border: 5px solid rgb(0, 97, 92);
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+}
+
+form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+fieldset {
+    flex: 1;
+    margin: 3%;
+    display: flex;
+    flex-direction: column;
+    border: none;
+}
+
+legend {
+     font-size: 2rem;
+     font-weight: bold;
+     color: rgb(0, 97, 92);
+     margin-bottom: 20px;
+}
+
+.form-property-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-property-div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.labels {
+    width: 25%;
+    font-size: 18px;
+    text-align: right;
+    font-weight: bold;
+    color: rgb(0, 97, 92);
+}
+
+.regular-input, .textarea {
+    width: 75%;
+    font-size: 18px;
+    padding-left: 0.25rem;
+    border: 1px solid rgb(0, 97, 92);
+}
+
+.textarea {
+    height: 100px;
+}
+
+.drop-box {
+    width: 250px;
+    text-align: center;
+    font-size: 18px;
+    border: 1px solid rgb(0, 97, 92);
+    background-color: white;
+}
+
+.form-button-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 100px;
+}
+
+.cancel-button {
+    font-size: 16px;
+    background-color: gray;
+    color: white;
+    padding: 5px;
+}
+
+.submit-button {
+    font-size: 16px;
+    background-color: rgb(148, 212, 210);
+    padding: 5px;
+}
+
+.error-input {
+    border-color: red;
+    border-width: 2px;
 }

@@ -1,4 +1,4 @@
-import { makeElement } from './DOM_basic_functions';
+import { makeElement, makeButton } from './DOM_basic_functions';
 
 export function createPageLayout(container) {
     const pageTitle = makeElement('h1', 'document-title', '', 'To-Do List', container);
@@ -7,7 +7,7 @@ export function createPageLayout(container) {
     const leftHeading = makeElement('h2', '', 'panel-heading', 'Projects', leftPanel);
     const leftPanelContainer = makeElement('div', '', 'panel-container', '', leftPanel);
     const leftPanelButtonBox = makeElement('div', '', 'button-box', '', leftPanel);
-    const addProjectButton = makeElement('button', '', 'add-button', 'Add Project', leftPanelButtonBox);
+    const addProjectButton = makeButton('', 'button', 'add-button', 'Add Project', leftPanelButtonBox);
     const rightPanel = makeElement('div', 'right-panel', '', '', mainContainer);
     const footer = makeElement('footer', '', '', '', document.body);
     const createdByText = makeElement('span', '', 'footer-text', 'Create by ', footer);
