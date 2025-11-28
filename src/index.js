@@ -9,19 +9,28 @@ import { titleCase, lowerCase, trim, getTodayDate, convertDate, dateForInput, co
 import { createPageLayout } from './modules/main_ui';
 import { createPanelList, addtoPanelList, applyProjectSelectionStyling, displayProjectList, openEditProjectForm, addErrorStyling, removeErrorStyling, createProject, createProjectEditForm, getProjectDetails, editFrontendProject, closeEditForm, createNewProjectForm, openNewProjectForm, closeNewProjectForm, getNewProject, clearInputs } from './modules/projects_DOM';
 
-function backEndProjectManager() {
-    let project;
+const backendService = (function () {
 
     function createBackendProject(title, description, dueDate, priority, label) {
         const properTitle = titleCase(trim(title));
         const properDescription = lowerCase(trim(description));
-        project = new makeProject(properTitle, properDescription, dueDate, priority, label);
-
-        return project;
-    };
+        return new makeProject(
+            properTitle, 
+            properDescription, 
+            dueDate, 
+            priority, 
+            label
+        );
+    }
 
     // The default project should not be deleteable
-    const defaultProject = createBackendProject('default list', 'list to begin tracking general todo items. ', '2026-02-10', 'Important', null);
+    const defaultProject = createBackendProject(
+        'default list', 
+        'list to begin tracking general todo items. ', 
+        '2026-02-10', 
+        'Important', 
+        null
+    );
     //const testProject1 = createBackendProject('fake project 1', 'something', '2025-12-01', 'Minor', 'Daily');
     //const testProject2 = createBackendProject('fake project 2', 'something', '2025-12-02', 'Urgent', 'Weekly');
     //const testProject3 = createBackendProject('fake project 3', 'something', '2025-12-03', 'Minor', 'Monthly');
@@ -29,24 +38,26 @@ function backEndProjectManager() {
     function deleteBackendProject(project) {
         if (project === defaultProject) {
             console.log("You cannot delete the default Project");
-        } else {
-            project.deleteProject();
-            project = null;
+            return;
         }
-        
-    };
 
-    let task;
+        project.deleteProject();
+    };
 
     function createBackendTask(title, description, dueDate, priority, project) {
         const properTitle = titleCase(trim(title));
         const properDescription = lowerCase(trim(description));
-        task = new makeTodoItem(properTitle, properDescription, dueDate, priority);
+
+        const task = new makeTodoItem(
+            properTitle, 
+            properDescription, 
+            dueDate, 
+            priority
+        );
 
         project.addTask(task);
-
         return task;
-    };
+    }
 
     if (process.env.NODE_ENV === "development") {
         window.titleCase = titleCase;
@@ -65,17 +76,21 @@ function backEndProjectManager() {
     }
 
     return {
-        defaultProject: defaultProject,
-        editBackendProject: editBackendProject,
-        project: project,
-        createBackendProject: createBackendProject
+        createBackendProject,
+        editBackendProject,
+        deleteBackendProject,
+        createBackendTask,
+        editBackendTask,
+        deleteBackEndTask,
+        defaultProject
     };
-};
+
+})();
 
 function userInterface() {
     const pageSpace = document.getElementById('page-space');
     const pageLayout = createPageLayout(pageSpace);
-    const defaultProject = backEndProjectManager().defaultProject;
+    const defaultProject = backendService.defaultProject;
     const projectEditForm = createProjectEditForm(document.body);
     const newProjectForm = createNewProjectForm(document.body);
     const projectInterface = createProject(pageLayout.rightPanel, projectEditForm);
@@ -93,7 +108,13 @@ function userInterface() {
                         addErrorStyling(projectEditForm);
                     } else {
                         editFrontendProject(projectInterface, projectEditForm, convertCalendarDate);
-                        backEndProjectManager().editBackendProject(backendProject, getProjectDetails(projectEditForm));
+                        console.log('before edit:');
+                        console.log(makeProject.MASTER_STORAGE);
+                        console.log(`if I'm editing defaultProject, backendProject should match. backendProject's index: ${index}`);
+                        console.log(backendProject);
+                        backendService.editBackendProject(backendProject, getProjectDetails(projectEditForm));
+                        console.log('after edit:');
+                        console.log(makeProject.MASTER_STORAGE);
                         closeEditForm(projectEditForm.editModule);
                     }
                 });
@@ -126,7 +147,7 @@ function userInterface() {
         } else {
             console.log('before creating a new project:')
             console.log(makeProject.MASTER_STORAGE);
-            const newProject = backEndProjectManager().createBackendProject(newProjectDetails.title, newProjectDetails.description, newProjectDetails.dueDate, newProjectDetails.priority, newProjectDetails.label);
+            const newProject = backendService.createBackendProject(newProjectDetails.title, newProjectDetails.description, newProjectDetails.dueDate, newProjectDetails.priority, newProjectDetails.label);
             console.log('after creating a new project');
             console.log(makeProject.MASTER_STORAGE);
             addtoPanelList(newProject, panelList);
@@ -161,3 +182,5 @@ console.log('REMINDER: 11/25 Something is wrong with backEndProjectManager().cre
 //console.log('REMINDER: 11/25 the panel list also will not let me select the new project');
 //11/25 replaced the querySelectorAll('project-name') variable with event delegation to handle dynamic element changes since querSelectorAll is static and only captures elements at that specific point in the code.
 console.log('REMINDER: 11/25 fix the date format. Uncaught runtime error happens when I click the edit button on the new project. Uncaught error: Cannot read properties of null(reading "getFullYear")at utility.js:33 ---> dateForInput (utility.js:33:1), at fillProjectEditForm (projects.DOM.js:218:1), at eval (projects_DOM.js:49:1), at Array.forEach(anonymous), at HTMLButtonElement.eval (projects_DOM.js:46:1)');
+console.log('REMINDER: 111/26 edits made to the default project are being treated like new projects and are being added to MASTER_STORAGE as the 0 index instead of adding to the end of the array.');
+console.log('REMINDER: 11/26 decide to turn backendProjectManager into either a singleton or IIFE');

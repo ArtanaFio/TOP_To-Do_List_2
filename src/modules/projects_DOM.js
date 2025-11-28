@@ -215,7 +215,10 @@ export function displayEditForm(editFormInterface) {
 export function fillProjectEditForm(editFormInterface, projectDetails, dateForInput) {
     editFormInterface.titleInput.value = projectDetails.title;
     editFormInterface.descriptionInput.value = projectDetails.description;
-    editFormInterface.dueDateDropDownBox.value = dateForInput(projectDetails.dueDate);
+    if (projectDetails.dueDate !== null) {
+        editFormInterface.dueDateDropDownBox.value = dateForInput(projectDetails.dueDate);
+    }
+    
     editFormInterface.priorityBox.value = projectDetails.priority;
     if (projectDetails.label !== null) {
         editFormInterface.labelBox.value = projectDetails.label;
@@ -239,7 +242,12 @@ export function editFrontendProject(projectInterface, editForm, convertCalendarD
         projectInterface.projectDueDate.textContent = 'None';
     }
     projectInterface.projectPriority.textContent = editForm.priorityBox.value;
-    projectInterface.projectLabel.textContent = editForm.labelBox.value;
+    if (editForm.labelBox.value !== 'None') {
+        projectInterface.projectLabel.textContent = editForm.labelBox.value;
+    } else {
+        projectInterface.projectLabel.textContent = 'unlabeled';
+    }
+    
 };
 
 export function getProjectDetails(formInterface) {
@@ -247,7 +255,12 @@ export function getProjectDetails(formInterface) {
     const newProjectDescription = formInterface.descriptionInput.value;
     const newProjectDueDate = formInterface.dueDateDropDownBox.value;
     const newProjectPriority = formInterface.priorityBox.value;
-    const newProjectLabel = formInterface.labelBox.value;
+    let newProjectLabel;
+    if (formInterface.labelBox.value === 'None') {
+        newProjectLabel = null;
+    } else {
+        newProjectLabel = formInterface.labelBox.value;
+    }
     const newProjectDetails = [newProjectTitle, newProjectDescription, newProjectDueDate, newProjectPriority, newProjectLabel];
     return newProjectDetails;
 };
