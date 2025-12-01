@@ -1,5 +1,6 @@
 import './assets/styles/main.css';
 import './assets/styles/projects.css';
+import './assets/styles/to-do_items.css';
 
 import makeProject from './modules/projects';
 import makeTodoItem from './modules/to-do_items';
@@ -9,7 +10,7 @@ import { titleCase, lowerCase, trim, getTodayDate, convertDate, dateForInput, co
 import { clearInputs, openForm, closeForm, } from './modules/DOM_basic_functions';
 import { createPageLayout } from './modules/main_ui';
 import { createPanelList, addtoPanelList, applyProjectSelectionStyling, displayProjectList, closeProject, addErrorStyling, removeErrorStyling, createProject, createProjectEditForm, getProjectDetails, editFrontendProject, createNewProjectForm, getNewProject, createConfirmDeletionForm, deletePanelListProject, getProjectName, fillProjectName, fillProjectEditForm } from './modules/projects_DOM';
-import { createTaskForm, createFrontendTask } from './modules/to-do_items_DOM';
+import { createTaskForm, getTaskDetails, createFrontendTask } from './modules/to-do_items_DOM';
 
 const backendService = (function () {
 
@@ -211,7 +212,17 @@ function userInterface() {
     });
 
     newTaskForm.submitButton.addEventListener('click', () => {
-        // get inputs
+        const taskDetails = getTaskDetails(newTaskForm);
+        console.log(taskDetails);
+        makeProject.MASTER_STORAGE.forEach((backendProject, index) => {
+            if (projectInterface.projectTitle.textContent === backendProject.title) {
+                backendService.createBackendTask(taskDetails.taskTitle, taskDetails.taskDescription, taskDetails.taskDueDate, taskDetails.taskPriority, backendProject);
+                console.log(`we addted this task to ${backendProject.title}`);
+            }
+        });
+        
+        const newTask = createFrontendTask(projectInterface.taskArea, taskDetails);
+        closeForm(newTaskForm);
     });
 };
 userInterface();
@@ -219,4 +230,4 @@ userInterface();
 
 console.log('------------------------');
 console.log('REMINDER: 12/1 apply tasks to projects');
-console.log('REMINDER: ');
+console.log('REMINDER: 12/1 edit the frontend task functions to display the correct tasks per project and remove all children from task area when closing project');

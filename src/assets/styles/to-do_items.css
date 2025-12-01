@@ -1,0 +1,29 @@
+.task {
+    display: flex;
+    width: 100%;
+    height: 26px;
+    align-items: center;
+    padding-left: 26px;
+}
+
+.task:hover {
+    background-color: rgb(195, 255, 253);
+}
+
+.empty-circle {
+    border: 2px solid rgb(0, 97, 92);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+}
+
+.empty-circle:hover {
+    border-width: 4px;
+}
+
+.task-text {
+    font-size: 16px;
+    color: rgb(0, 97, 92);
+    display: flex;
+    align-items: center;
+}

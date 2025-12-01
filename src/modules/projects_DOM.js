@@ -277,7 +277,6 @@ export function createNewProjectForm(container) {
     priorityOptions.forEach(priorityType => {
         const option = makeDropDownOptions(priorityType, priorityBox);
     });
-
     const labelDiv = makeElement('div', '', 'form-property-div', '', propertyBox);
     const labelLabel = makeLabel('', 'label', 'labels', 'Label:', labelDiv);
     const labelBox = makeElement('select', '', 'drop-box', '', labelDiv);
@@ -286,14 +285,8 @@ export function createNewProjectForm(container) {
     labelOptions.forEach(labelType => {
         const option = makeDropDownOptions(labelType, labelBox);
     });
-    
     const formButtonBox = makeElement('div', '', 'form-button-box', '', formFieldset);
     const cancelButton = makeButton('', 'button', 'cancel-button', 'Cancel', formButtonBox);
-    
-    cancelButton.addEventListener('click', () => {
-        closeEditForm(module);
-    });
-    
     const submitButton = makeButton('', 'button', 'submit-button', 'Submit', formButtonBox);
 
     return {

@@ -42,6 +42,33 @@ export function createTaskForm(container) {
     }
 };
 
-export function createFrontendTask() {
+export function getTaskDetails(form) {
+    const taskTitle = form.titleInput.value;
+    const taskDescription = form.descriptionInput.value;
+    const taskDueDate = form.dueDateDropDownBox.value;
+    const taskPriority = form.priorityBox.value;
 
+    return {
+        taskTitle: taskTitle,
+        taskDescription: taskDescription,
+        taskDueDate: taskDueDate,
+        taskPriority: taskPriority
+    }
+};
+
+export function createFrontendTask(container, properties) {
+    const taskBox = makeElement('div', '', 'task', '', container);
+    const emptyCircle = makeElement('div', '', 'empty-circle', '', taskBox);
+    const title = makeElement('p', '', 'task-text', properties.taskTitle, taskBox);
+    if (properties.taskDescription) {
+        const description = makeElement('p', '', 'task-text', properties.taskDescription, taskBox);
+    }
+    if (properties.taskDueDate) {
+        const dueDate = makeElement('p', '', 'task-text', properties.taskDueDate, taskBox);
+    }
+    if (properties.taskPriority) {
+        const priority = makeElement('p', '', 'task-text', properties.taskPriority, taskBox);
+    }
+    
+    
 };
