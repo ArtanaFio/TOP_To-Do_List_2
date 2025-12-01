@@ -30,6 +30,13 @@ export function applyProjectSelectionStyling(parentContainer, closeProjectButton
     }, true);
 
     parentContainer.addEventListener('click', (e) => {
+        console.log('select styling on panel list projects');
+        for (let i = 0; i < parentContainer.children.length; i++) {
+            console.log(`${parentContainer.children[i].textContent} classList: ${parentContainer.children[i].classList}`);
+            if (parentContainer.children[i].classList.contains('selected')) {
+                parentContainer.children[i].classList.remove('selected');
+            }
+        }
         if (e.target.classList.contains('project-name')) {
             e.target.classList.add('selected');
             e.target.classList.remove('pre-select');
