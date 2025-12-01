@@ -61,19 +61,18 @@ body {
     background-color: white;
     display: flex;
     flex-direction: column;
-}
-
-.panel-list {
-    border: 2px dashed blue;
+    border: 2px solid rgb(0, 97, 92);
 }
 
 #right-panel {
-    border: 3px dotted orchid;
     flex: 3;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    border-width: 2px 2px 2px 0;
+    border-color: rgb(0, 97, 92);
+    border-style: solid;
 }
 
 footer {

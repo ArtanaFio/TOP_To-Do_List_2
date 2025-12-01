@@ -30,13 +30,12 @@ export function applyProjectSelectionStyling(parentContainer, closeProjectButton
     }, true);
 
     parentContainer.addEventListener('click', (e) => {
-        console.log('select styling on panel list projects');
         for (let i = 0; i < parentContainer.children.length; i++) {
-            console.log(`${parentContainer.children[i].textContent} classList: ${parentContainer.children[i].classList}`);
             if (parentContainer.children[i].classList.contains('selected')) {
                 parentContainer.children[i].classList.remove('selected');
             }
         }
+
         if (e.target.classList.contains('project-name')) {
             e.target.classList.add('selected');
             e.target.classList.remove('pre-select');
@@ -48,17 +47,6 @@ export function applyProjectSelectionStyling(parentContainer, closeProjectButton
 
         addProjectSubmitButton.addEventListener('click', () => {
             e.target.classList.remove('selected');
-        });
-    });
-};
-
-export function openEditProjectForm(editButton, editFormInterface, projectTitle, backendProjectStorage, dateForInput) {
-    editButton.addEventListener('click', () => {
-        backendProjectStorage.forEach((backendProject, index) => {
-            if (projectTitle.textContent === backendProject.title) {
-            displayEditForm(editFormInterface);
-            fillProjectEditForm(editFormInterface, backendProject, dateForInput);
-            }
         });
     });
 };
@@ -155,12 +143,12 @@ export function closeProject(project) {
 };
 
 export function createProjectEditForm(container) {
-    const editModule = makeElement('div', '', 'transparent-box gone', '', container);
-    const editFormContainer = makeElement('div', '', 'form-container', '', editModule);
-    const editForm = makeElement('form', '', '', '', editFormContainer);
-    const editFormFieldset = makeElement('fieldset', '', '', '', editForm);
-    const editFormLegend = makeElement('legend', '', '', 'Project Edit Form', editFormFieldset); 
-    const propertyBox = makeElement('div', '', 'form-property-box', '', editFormFieldset);
+    const module = makeElement('div', '', 'transparent-box gone', '', container);
+    const formContainer = makeElement('div', '', 'form-container', '', module);
+    const form = makeElement('form', '', '', '', formContainer);
+    const formFieldset = makeElement('fieldset', '', '', '', form);
+    const formLegend = makeElement('legend', '', '', 'Project Edit Form', formFieldset); 
+    const propertyBox = makeElement('div', '', 'form-property-box', '', formFieldset);
     const titleDiv = makeElement('div', '', 'form-property-div', '', propertyBox);
     const titleLabel = makeLabel('', 'title', 'labels', 'Title:', titleDiv);
     const titleInput = makeInput('input', 'title', 'text', 'title', 'regular-input', 'Do you have a title?', titleDiv);
@@ -178,7 +166,6 @@ export function createProjectEditForm(container) {
     priorityOptions.forEach(priorityType => {
         const option = makeDropDownOptions(priorityType, priorityBox);
     });
-
     const labelDiv = makeElement('div', '', 'form-property-div', '', propertyBox);
     const labelLabel = makeLabel('', 'label', 'labels', 'Label:', labelDiv);
     const labelBox = makeElement('select', '', 'drop-box', '', labelDiv);
@@ -187,19 +174,13 @@ export function createProjectEditForm(container) {
     labelOptions.forEach(labelType => {
         const option = makeDropDownOptions(labelType, labelBox);
     });
-    
-    const formButtonBox = makeElement('div', '', 'form-button-box', '', editFormFieldset);
+    const formButtonBox = makeElement('div', '', 'form-button-box', '', formFieldset);
     const cancelButton = makeButton('', 'button', 'cancel-button', 'Cancel', formButtonBox);
-    
-    cancelButton.addEventListener('click', () => {
-        closeEditForm(editModule);
-    });
-    
     const submitButton = makeButton('', 'button', 'submit-button', 'Submit', formButtonBox);
 
     return {
-        editModule: editModule,
-        editFormLegend: editFormLegend,
+        module: module,
+        formLegend: formLegend,
         titleInput: titleInput,
         descriptionInput: descriptionInput,
         dueDateDropDownBox: dueDateDropDownBox,
@@ -214,16 +195,13 @@ export function createProjectEditForm(container) {
     }
 };
 
-export function displayEditForm(editFormInterface) {
-    editFormInterface.editModule.classList.add('flexy');
-    editFormInterface.editModule.classList.remove('gone');
-};
-
 export function fillProjectEditForm(editFormInterface, projectDetails, dateForInput) {
     editFormInterface.titleInput.value = projectDetails.title;
     editFormInterface.descriptionInput.value = projectDetails.description;
     if (projectDetails.dueDate !== null) {
         editFormInterface.dueDateDropDownBox.value = dateForInput(projectDetails.dueDate);
+    } else {
+        editFormInterface.dueDateDropDownBox.value = null;
     }
     
     editFormInterface.priorityBox.value = projectDetails.priority;
@@ -233,11 +211,6 @@ export function fillProjectEditForm(editFormInterface, projectDetails, dateForIn
         editFormInterface.labelBox.value = 'None';
     }
     
-};
-
-export function closeEditForm(editModule) {
-    editModule.classList.add('gone');
-    editModule.classList.remove('flexy');
 };
 
 export function editFrontendProject(projectInterface, editForm, convertCalendarDate) {
@@ -337,24 +310,6 @@ export function createNewProjectForm(container) {
         cancelButton: cancelButton,
         submitButton: submitButton
     }
-};
-
-export function openForm(formInterface) {
-    formInterface.module.classList.add('flexy');
-    formInterface.module.classList.remove('gone');
-};
-
-export function closeForm(formInterface) {
-    formInterface.module.classList.add('gone');
-    formInterface.module.classList.remove('flexy');
-};
-
-export function clearInputs(formInterface) {
-    formInterface.titleInput.value = '';
-    formInterface.descriptionInput.value = '';
-    formInterface.dueDateDropDownBox.value = '';
-    formInterface.priorityBox.value = 'Minor';
-    formInterface.labelBox.value = 'None';
 };
 
 export function getNewProject(newProjectFormInterface) {

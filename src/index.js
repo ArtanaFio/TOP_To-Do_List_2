@@ -6,8 +6,10 @@ import makeTodoItem from './modules/to-do_items';
 import { editBackendProject, deleteBackEndTask } from './modules/projects';
 import { editBackendTask } from './modules/to-do_items';
 import { titleCase, lowerCase, trim, getTodayDate, convertDate, dateForInput, convertCalendarDate } from './modules/utility';
+import { clearInputs, openForm, closeForm, } from './modules/DOM_basic_functions';
 import { createPageLayout } from './modules/main_ui';
-import { createPanelList, addtoPanelList, applyProjectSelectionStyling, displayProjectList, closeProject, openEditProjectForm, addErrorStyling, removeErrorStyling, createProject, createProjectEditForm, getProjectDetails, editFrontendProject, closeEditForm, createNewProjectForm, openForm, closeForm, getNewProject, clearInputs, createConfirmDeletionForm, deletePanelListProject, getProjectName, fillProjectName } from './modules/projects_DOM';
+import { createPanelList, addtoPanelList, applyProjectSelectionStyling, displayProjectList, closeProject, addErrorStyling, removeErrorStyling, createProject, createProjectEditForm, getProjectDetails, editFrontendProject, createNewProjectForm, getNewProject, createConfirmDeletionForm, deletePanelListProject, getProjectName, fillProjectName, fillProjectEditForm } from './modules/projects_DOM';
+import { createTaskForm, createFrontendTask } from './modules/to-do_items_DOM';
 
 const backendService = (function () {
 
@@ -90,14 +92,13 @@ const backendService = (function () {
 function userInterface() {
     const pageSpace = document.getElementById('page-space');
     const pageLayout = createPageLayout(pageSpace);
-    const defaultProject = backendService.defaultProject;
-    const projectEditForm = createProjectEditForm(document.body);
-    const newProjectForm = createNewProjectForm(document.body);
-    const projectInterface = createProject(pageLayout.rightPanel, projectEditForm);
     const panelList = createPanelList(pageLayout.leftPanelContainer);
+    const defaultProject = backendService.defaultProject;
     const listedDefaultProject = addtoPanelList(defaultProject, panelList);
+    const projectEditForm = createProjectEditForm(document.body);
+    const projectInterface = createProject(pageLayout.rightPanel, projectEditForm);
+    const newProjectForm = createNewProjectForm(document.body);
     applyProjectSelectionStyling(panelList, projectInterface.closeButton, newProjectForm.submitButton);
-    
     panelList.addEventListener('click', (e) => {
         makeProject.MASTER_STORAGE.forEach((backendProject, index) => {
             if (backendProject.title === e.target.textContent) {
@@ -113,21 +114,31 @@ function userInterface() {
                     } else {
                         editFrontendProject(projectInterface, projectEditForm, convertCalendarDate);
                         backendService.editBackendProject(backendProject, getProjectDetails(projectEditForm));
-                        closeEditForm(projectEditForm.editModule);
+                        closeForm(projectEditForm);
                     }
                 });
             }
         });
     });
 
-    projectEditForm.editModule.addEventListener('click', () => {
+    projectInterface.editButton.addEventListener('click', () => {
+        makeProject.MASTER_STORAGE.forEach((backendProject, index) => {
+            if (projectInterface.projectTitle.textContent === backendProject.title) {
+                openForm(projectEditForm);
+                fillProjectEditForm(projectEditForm, backendProject, dateForInput);
+            }
+        });
+    });
+
+    projectEditForm.cancelButton.addEventListener('click', () => {
+        closeForm(projectEditForm);
+    });
+
+    projectEditForm.module.addEventListener('click', () => {
         if (projectEditForm.titleInput.value !== '') {
             removeErrorStyling(projectEditForm);
         }
     });
-    
-    openEditProjectForm(projectInterface.editButton, projectEditForm, projectInterface.projectTitle, makeProject.MASTER_STORAGE, dateForInput);
-    // defaultProject.title, defaultProject.description, convertDate(defaultProject.dueDate), defaultProject.priority
 
     pageLayout.addProjectButton.addEventListener('click', () => {
         openForm(newProjectForm);
@@ -143,11 +154,7 @@ function userInterface() {
         if (newProjectForm.titleInput.value === '') {
             addErrorStyling(newProjectForm);
         } else {
-            //console.log('before creating a new project:')
-            //console.log(makeProject.MASTER_STORAGE);
             const newProject = backendService.createBackendProject(newProjectDetails.title, newProjectDetails.description, newProjectDetails.dueDate, newProjectDetails.priority, newProjectDetails.label);
-            //console.log('after creating a new project');
-            //console.log(makeProject.MASTER_STORAGE);
             addtoPanelList(newProject, panelList);
             closeForm(newProjectForm);
             clearInputs(newProjectForm);
@@ -189,7 +196,27 @@ function userInterface() {
         closeForm(deleteProjectForm);
         closeProject(projectInterface.project);
     });
+
+    const taskArea = projectInterface.taskArea;
+    const addTaskButton = projectInterface.addTaskButton;
+    const newTaskForm = createTaskForm(document.body);
+
+    addTaskButton.addEventListener('click', () => {
+        openForm(newTaskForm);
+    });
+
+    newTaskForm.cancelButton.addEventListener('click', () => {
+        closeForm(newTaskForm);
+        clearInputs(newTaskForm);
+    });
+
+    newTaskForm.submitButton.addEventListener('click', () => {
+        // get inputs
+    });
 };
 userInterface();
 
+
 console.log('------------------------');
+console.log('REMINDER: 12/1 apply tasks to projects');
+console.log('REMINDER: ');

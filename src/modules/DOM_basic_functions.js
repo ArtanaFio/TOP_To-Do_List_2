@@ -119,3 +119,23 @@ export function makeNotAnOption(parent) {
     parent.appendChild(option);
     return option;
 };
+
+export function clearInputs(formInterface) {
+    formInterface.titleInput.value = '';
+    formInterface.descriptionInput.value = '';
+    formInterface.dueDateDropDownBox.value = '';
+    formInterface.priorityBox.value = 'Minor';
+    if (formInterface.lavelBox) {
+        formInterface.labelBox.value = 'None';
+    }
+};
+
+export function openForm(formInterface) {
+    formInterface.module.classList.add('flexy');
+    formInterface.module.classList.remove('gone');
+};
+
+export function closeForm(formInterface) {
+    formInterface.module.classList.add('gone');
+    formInterface.module.classList.remove('flexy');
+};
