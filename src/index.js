@@ -7,7 +7,7 @@ import { editBackendProject, deleteBackEndTask } from './modules/projects';
 import { editBackendTask } from './modules/to-do_items';
 import { titleCase, lowerCase, trim, getTodayDate, convertDate, dateForInput, convertCalendarDate } from './modules/utility';
 import { createPageLayout } from './modules/main_ui';
-import { createPanelList, addtoPanelList, applyProjectSelectionStyling, displayProjectList, openEditProjectForm, addErrorStyling, removeErrorStyling, createProject, createProjectEditForm, getProjectDetails, editFrontendProject, closeEditForm, createNewProjectForm, openNewProjectForm, closeNewProjectForm, getNewProject, clearInputs } from './modules/projects_DOM';
+import { createPanelList, addtoPanelList, applyProjectSelectionStyling, displayProjectList, closeProject, openEditProjectForm, addErrorStyling, removeErrorStyling, createProject, createProjectEditForm, getProjectDetails, editFrontendProject, closeEditForm, createNewProjectForm, openForm, closeForm, getNewProject, clearInputs, createConfirmDeletionForm, deletePanelListProject, getProjectName, fillProjectName } from './modules/projects_DOM';
 
 const backendService = (function () {
 
@@ -94,27 +94,25 @@ function userInterface() {
     const projectEditForm = createProjectEditForm(document.body);
     const newProjectForm = createNewProjectForm(document.body);
     const projectInterface = createProject(pageLayout.rightPanel, projectEditForm);
-    console.log(defaultProject);
     const panelList = createPanelList(pageLayout.leftPanelContainer);
     const listedDefaultProject = addtoPanelList(defaultProject, panelList);
-    applyProjectSelectionStyling(panelList, projectInterface.closeButton);
+    applyProjectSelectionStyling(panelList, projectInterface.closeButton, newProjectForm.submitButton);
     
     panelList.addEventListener('click', (e) => {
         makeProject.MASTER_STORAGE.forEach((backendProject, index) => {
             if (backendProject.title === e.target.textContent) {
+                if (index === 0) {
+                    projectInterface.deleteButton.classList.add('gone');
+                } else {
+                    projectInterface.deleteButton.classList.remove('gone');
+                }
                 displayProjectList(projectInterface, backendProject, convertDate);
                 projectEditForm.submitButton.addEventListener('click', () => {
                     if (projectEditForm.titleInput.value === '') {
                         addErrorStyling(projectEditForm);
                     } else {
                         editFrontendProject(projectInterface, projectEditForm, convertCalendarDate);
-                        console.log('before edit:');
-                        console.log(makeProject.MASTER_STORAGE);
-                        console.log(`if I'm editing defaultProject, backendProject should match. backendProject's index: ${index}`);
-                        console.log(backendProject);
                         backendService.editBackendProject(backendProject, getProjectDetails(projectEditForm));
-                        console.log('after edit:');
-                        console.log(makeProject.MASTER_STORAGE);
                         closeEditForm(projectEditForm.editModule);
                     }
                 });
@@ -132,12 +130,12 @@ function userInterface() {
     // defaultProject.title, defaultProject.description, convertDate(defaultProject.dueDate), defaultProject.priority
 
     pageLayout.addProjectButton.addEventListener('click', () => {
-        openNewProjectForm(newProjectForm);
+        openForm(newProjectForm);
     });
 
     newProjectForm.cancelButton.addEventListener('click', () => {
         clearInputs(newProjectForm);
-        closeNewProjectForm(newProjectForm);
+        closeForm(newProjectForm);
     });
 
     newProjectForm.submitButton.addEventListener('click', () => {
@@ -145,13 +143,16 @@ function userInterface() {
         if (newProjectForm.titleInput.value === '') {
             addErrorStyling(newProjectForm);
         } else {
-            console.log('before creating a new project:')
-            console.log(makeProject.MASTER_STORAGE);
+            //console.log('before creating a new project:')
+            //console.log(makeProject.MASTER_STORAGE);
             const newProject = backendService.createBackendProject(newProjectDetails.title, newProjectDetails.description, newProjectDetails.dueDate, newProjectDetails.priority, newProjectDetails.label);
-            console.log('after creating a new project');
-            console.log(makeProject.MASTER_STORAGE);
+            //console.log('after creating a new project');
+            //console.log(makeProject.MASTER_STORAGE);
             addtoPanelList(newProject, panelList);
-            closeNewProjectForm(newProjectForm);
+            closeForm(newProjectForm);
+            clearInputs(newProjectForm);
+            closeProject(projectInterface.project);
+
         }
         
     });
@@ -160,6 +161,34 @@ function userInterface() {
         if (newProjectForm.titleInput.value !== '') {
             removeErrorStyling(newProjectForm);
         }
+    });
+
+    const deleteProjectForm = createConfirmDeletionForm(document.body);
+    projectInterface.deleteButton.addEventListener('click', () => {
+        const projectName = getProjectName(panelList);
+        console.log(`replace the word with '${projectName}'`);
+        fillProjectName(deleteProjectForm.projectSpace, projectName);
+        openForm(deleteProjectForm);
+        
+    });
+    
+    deleteProjectForm.noButton.addEventListener('click', () => {
+        closeForm(deleteProjectForm);
+    });
+
+    deleteProjectForm.yesButton.addEventListener('click', () => {
+        for (let i = 0; i <  panelList.children.length; i++) {
+            if (panelList.children[i].classList.contains('selected')) {
+                const deletedProject = makeProject.MASTER_STORAGE.find(backendProject => backendProject.title === panelList.children[i].textContent);
+                backendService.deleteBackendProject(deletedProject);
+                deletePanelListProject(panelList.children[i]);
+                
+            }
+        }
+        console.log('after deleteBackendProject:');
+        console.log(makeProject.MASTER_STORAGE);
+        closeForm(deleteProjectForm);
+        closeProject(projectInterface.project);
     });
 };
 userInterface();
@@ -178,9 +207,16 @@ console.log('------------------------');
 //console.log('REMINDER: 11/21 fix createProjectEditForm labelbox options because we do not want a not-option and we also want to display the correct label in the fill function');
 //console.log('REMINDER: 11/24 inside submitProjectEdits, figure out how to set up editBackendProject');
 // had created applyProjectSelectionStyling() to only handle styling that was originally in selectProject(), and deconstructed submitProjectEdits to move the event listener on the submit button directly to the entry point.
-console.log('REMINDER: 11/25 Something is wrong with backEndProjectManager().createBackendProject. Whenever I submit a new project, it creates a new default project before the one I specified');
+//console.log('REMINDER: 11/25 Something is wrong with backEndProjectManager().createBackendProject. Whenever I submit a new project, it creates a new default project before the one I specified');
 //console.log('REMINDER: 11/25 the panel list also will not let me select the new project');
 //11/25 replaced the querySelectorAll('project-name') variable with event delegation to handle dynamic element changes since querSelectorAll is static and only captures elements at that specific point in the code.
-console.log('REMINDER: 11/25 fix the date format. Uncaught runtime error happens when I click the edit button on the new project. Uncaught error: Cannot read properties of null(reading "getFullYear")at utility.js:33 ---> dateForInput (utility.js:33:1), at fillProjectEditForm (projects.DOM.js:218:1), at eval (projects_DOM.js:49:1), at Array.forEach(anonymous), at HTMLButtonElement.eval (projects_DOM.js:46:1)');
-console.log('REMINDER: 111/26 edits made to the default project are being treated like new projects and are being added to MASTER_STORAGE as the 0 index instead of adding to the end of the array.');
-console.log('REMINDER: 11/26 decide to turn backendProjectManager into either a singleton or IIFE');
+//console.log('REMINDER: 11/25 fix the date format. Uncaught runtime error happens when I click the edit button on the new project. Uncaught error: Cannot read properties of null(reading "getFullYear")at utility.js:33 ---> dateForInput (utility.js:33:1), at fillProjectEditForm (projects.DOM.js:218:1), at eval (projects_DOM.js:49:1), at Array.forEach(anonymous), at HTMLButtonElement.eval (projects_DOM.js:46:1)');
+//console.log('REMINDER: 111/26 edits made to the default project are being treated like new projects and are being added to MASTER_STORAGE as the 0 index instead of adding to the end of the array.');
+//console.log('REMINDER: 11/26 decide to turn backendProjectManager into either a singleton or IIFE');
+//console.log('11/28 turned the function backendProjectManager() into the singleton backendService to ensure only one instance of the backend state exists and is called');
+//console.log('11/28 changed "closeNewProjectForm" into "closeForm" so that I can use it with the deleteProjectForm');
+//console.log('REMINDER: 11/28 need to find the function that closes the project and add it to the yesButton. Need to write function to delete front end and connect it to the backend');
+//console.log('11/28 began writing up the frontend delete project function. Need to remove unnecessary console messages and then connect the backend delete project function');
+//console.log('REMINDER: 11/28 fix the uncaught typeerror: cannot read properties of undefined (reading textContent) for trying to delete the backend using the panelList.children[i].textContent');
+//console.log('11/30 used array.find to get the backend project to match the frontend project for deletion');
+console.log('REMINDER: 11/30 need to unapply select stying to previously selected project whenever user selects a new project without closing the project first and update the project Interface details');

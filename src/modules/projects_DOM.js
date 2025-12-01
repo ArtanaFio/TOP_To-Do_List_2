@@ -12,7 +12,7 @@ export function addtoPanelList(projectDetails, panelList) {
     const projectName = makeElement('li', '', 'project-name', projectDetails.title, panelList);
 };
 
-export function applyProjectSelectionStyling(parentContainer, closeProjectButton) {
+export function applyProjectSelectionStyling(parentContainer, closeProjectButton, addProjectSubmitButton) {
     parentContainer.addEventListener('mouseenter', (e) => {
         if (e.target.classList.contains('project-name')) {
             if (!e.target.classList.contains('selected')) {
@@ -38,6 +38,10 @@ export function applyProjectSelectionStyling(parentContainer, closeProjectButton
         closeProjectButton.addEventListener('click', () => {
             e.target.classList.remove('selected');
         });
+
+        addProjectSubmitButton.addEventListener('click', () => {
+            e.target.classList.remove('selected');
+        });
     });
 };
 
@@ -57,6 +61,7 @@ export function createProject(container, editFormInterface) {
     const project = makeElement('div', '', 'project gone', '', container);
     const projectDetailBox = makeElement('div', '', 'detail-box', '', project);
     const projectButtonBox = makeElement('div', '', 'project-button-div', '', projectDetailBox);
+    const doubleButtonBox = makeElement('div', '', 'double-button-div', '', projectButtonBox);
     const titleAndLabelBox = makeElement('div', '', 'title-label-div', '', projectDetailBox);
     const projectTitle = makeElement('h1', '', 'project-title', '', titleAndLabelBox);
     const projectLabel = makeElement('h4', '', 'project-label', 'LABEL', titleAndLabelBox);
@@ -74,14 +79,8 @@ export function createProject(container, editFormInterface) {
     const taskArea = makeElement('div', '', 'task-area', '', taskBox);
     const taskButtonBox = makeElement('div', '', 'task-button-box', '', taskBox);
     const addTaskButton = makeButton('', 'button', 'add-button', 'Add Task', taskButtonBox);
-
-    const editButton = makeButton('', 'button', 'edit-button', 'Edit', projectButtonBox);
-
-    editButton.addEventListener('click', () => {
-        //displayEditForm(editFormInterface, projectTitle.textContent, projectDescription.textContent, projectDueDate.textContent, projectPriority.textContent);
-        //console.log(projectTitle.textContent);
-    });
-
+    const deleteButton = makeButton('', 'button', 'delete-button', 'Delete', doubleButtonBox);
+    const editButton = makeButton('', 'button', 'edit-button', 'Edit', doubleButtonBox);
     const closeButton = makeButton('', 'button', 'close-button', 'Close', projectButtonBox);
     
     closeButton.addEventListener('click', () => {
@@ -95,6 +94,7 @@ export function createProject(container, editFormInterface) {
 
     return {
         project: project,
+        deleteButton: deleteButton,
         editButton: editButton,
         closeButton: closeButton,
         projectTitle: projectTitle,
@@ -142,7 +142,7 @@ export function displayProjectList(projectInterface, projectDetails, convertDate
     }
 };
 
-function closeProject(project) {
+export function closeProject(project) {
     project.classList.add('gone');
     project.classList.remove('flexy');
 };
@@ -332,14 +332,14 @@ export function createNewProjectForm(container) {
     }
 };
 
-export function openNewProjectForm(newProjectFormInterface) {
-    newProjectFormInterface.module.classList.add('flexy');
-    newProjectFormInterface.module.classList.remove('gone');
+export function openForm(formInterface) {
+    formInterface.module.classList.add('flexy');
+    formInterface.module.classList.remove('gone');
 };
 
-export function closeNewProjectForm(newProjectFormInterface) {
-    newProjectFormInterface.module.classList.add('gone');
-    newProjectFormInterface.module.classList.remove('flexy');
+export function closeForm(formInterface) {
+    formInterface.module.classList.add('gone');
+    formInterface.module.classList.remove('flexy');
 };
 
 export function clearInputs(formInterface) {
@@ -361,6 +361,41 @@ export function getNewProject(newProjectFormInterface) {
     return newProjectDetails;
 };
 
+export function createConfirmDeletionForm(container) {
+    const module = makeElement('div', '', 'transparent-box gone', '', container);
+    const formContainer = makeElement('div', '', 'delete-form-container', '', module);
+    const form = makeElement('form', '', '', '', formContainer);
+    const formFieldset = makeElement('fieldset', '', '', '', form);
+    const formLegend = makeElement('legend', '', '', '', formFieldset);
+    const formLegendText = makeElement('span', '', '', 'Do you want to delete ', formLegend);
+    const projectSpace = makeElement('span', '', '', '', formLegend);
+    const questionMark = makeElement('span', '', '', '?', formLegend);
+    const formButtonBox = makeElement('div', '', 'form-button-box', '', formFieldset);
+    const noButton = makeButton('', 'button', 'cancel-button', 'No', formButtonBox);
+    const yesButton = makeButton('', 'button', 'submit-button', 'Yes', formButtonBox);
 
+    return {
+        module: module,
+        projectSpace: projectSpace,
+        noButton: noButton,
+        yesButton: yesButton
+    };
+};
+
+export function deletePanelListProject(project) {
+    project.remove();
+};
+
+export function getProjectName(list) {
+    for (let i = 0; i < list.children.length; i++) {
+        if (list.children[i].classList.contains('selected')) {
+            return list.children[i].textContent;
+        }
+    }
+};
+
+export function fillProjectName(formSpace, projectName) {
+    formSpace.textContent = projectName;
+};
 
 
