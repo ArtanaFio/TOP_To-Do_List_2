@@ -56,7 +56,7 @@ export function getTaskDetails(form) {
     }
 };
 
-export function createFrontendTask(container, properties) {
+export function createFrontendTask(container, properties, convertCalendarDate) {
     const taskBox = makeElement('div', '', 'task', '', container);
     const emptyCircle = makeElement('div', '', 'empty-circle', '', taskBox);
     const title = makeElement('p', '', 'task-text', properties.taskTitle, taskBox);
@@ -64,11 +64,20 @@ export function createFrontendTask(container, properties) {
         const description = makeElement('p', '', 'task-text', properties.taskDescription, taskBox);
     }
     if (properties.taskDueDate) {
-        const dueDate = makeElement('p', '', 'task-text', properties.taskDueDate, taskBox);
+        const dueDate = makeElement('p', '', 'task-text', convertCalendarDate(properties.taskDueDate), taskBox);
     }
-    if (properties.taskPriority) {
-        const priority = makeElement('p', '', 'task-text', properties.taskPriority, taskBox);
+    const priority = makeElement('p', '', 'task-text', properties.taskPriority, taskBox);
+};
+
+export function applyExistingTasks(container, backendTask, convertDate) {
+    const taskBox = makeElement('div', '', 'task', '', container);
+    const emptyCircle = makeElement('div', '', 'empty-circle', '', taskBox);
+    const title = makeElement('p', '', 'task-text', backendTask.title, taskBox);
+    if (backendTask.description) {
+        const description = makeElement('p', '', 'task-text', backendTask.description, taskBox);
     }
-    
-    
+    if (backendTask.dueDate) {
+        const dueDate = makeElement('p', '', 'task-text', convertDate(backendTask.dueDate), taskBox);
+    }
+    const priority = makeElement('p', '', 'task-text', backendTask.priority, taskBox);
 };

@@ -24,6 +24,9 @@ export function getTodayDate() {
 
 export function convertDate(longDate) {
     const year = longDate.getFullYear();
+    /*if (longDate.getMonth() + 1 < 10) {
+        const month = `0${longDate.getMonth() + 1}`;
+    }*/
     const month = longDate.getMonth() + 1;
     const day = longDate.getDate();
     return `${month}/${day}/${year}`;
@@ -47,14 +50,20 @@ export function convertCalendarDate(date) {
         return date;
     } else {
         const year = date.slice(0,4);
+        const firstMonthDigit = date.slice(5, 6);
         let month;
-        const firstDigit = date.slice(5, 6);
-        if (firstDigit === '0') {
+        if (firstMonthDigit === '0') {
             month = date.slice(6, 7);
         } else {
             month = date.slice(5, 7);
         }
-        const day = date.slice(8, 10);
+        const firstDayDigit = date.slice(8, 9);
+        let day;
+        if (firstDayDigit === '0') {
+            day = date.slice(9, 10);
+        } else {
+            day = date.slice(8, 10);
+        }
         return `${month}/${day}/${year}`;
     }
 };

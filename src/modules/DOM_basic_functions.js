@@ -125,7 +125,7 @@ export function clearInputs(formInterface) {
     formInterface.descriptionInput.value = '';
     formInterface.dueDateDropDownBox.value = '';
     formInterface.priorityBox.value = 'Minor';
-    if (formInterface.lavelBox) {
+    if (formInterface.labelBox) {
         formInterface.labelBox.value = 'None';
     }
 };
@@ -138,4 +138,12 @@ export function openForm(formInterface) {
 export function closeForm(formInterface) {
     formInterface.module.classList.add('gone');
     formInterface.module.classList.remove('flexy');
+};
+
+export function addErrorStyling(formInterface) {
+    formInterface.titleInput.classList.add('error-input');
+};
+
+export function removeErrorStyling(formInterface) {
+    formInterface.titleInput.classList.remove('error-input');
 };

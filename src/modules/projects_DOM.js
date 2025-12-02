@@ -245,14 +245,6 @@ export function getProjectDetails(formInterface) {
     return newProjectDetails;
 };
 
-export function addErrorStyling(formInterface) {
-    formInterface.titleInput.classList.add('error-input');
-};
-
-export function removeErrorStyling(formInterface) {
-    formInterface.titleInput.classList.remove('error-input');
-};
-
 export function createNewProjectForm(container) {
     const module = makeElement('div', '', 'transparent-box gone', '', container);
     const formContainer = makeElement('div', '', 'form-container', '', module);
@@ -352,5 +344,3 @@ export function getProjectName(list) {
 export function fillProjectName(formSpace, projectName) {
     formSpace.textContent = projectName;
 };
-
-

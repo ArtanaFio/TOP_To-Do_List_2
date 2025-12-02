@@ -4,6 +4,7 @@
     height: 26px;
     align-items: center;
     padding-left: 26px;
+    cursor: pointer;
 }
 
 .task:hover {

@@ -7,10 +7,10 @@ import makeTodoItem from './modules/to-do_items';
 import { editBackendProject, deleteBackEndTask } from './modules/projects';
 import { editBackendTask } from './modules/to-do_items';
 import { titleCase, lowerCase, trim, getTodayDate, convertDate, dateForInput, convertCalendarDate } from './modules/utility';
-import { clearInputs, openForm, closeForm, } from './modules/DOM_basic_functions';
+import { clearInputs, openForm, closeForm, addErrorStyling, removeErrorStyling } from './modules/DOM_basic_functions';
 import { createPageLayout } from './modules/main_ui';
-import { createPanelList, addtoPanelList, applyProjectSelectionStyling, displayProjectList, closeProject, addErrorStyling, removeErrorStyling, createProject, createProjectEditForm, getProjectDetails, editFrontendProject, createNewProjectForm, getNewProject, createConfirmDeletionForm, deletePanelListProject, getProjectName, fillProjectName, fillProjectEditForm } from './modules/projects_DOM';
-import { createTaskForm, getTaskDetails, createFrontendTask } from './modules/to-do_items_DOM';
+import { createPanelList, addtoPanelList, applyProjectSelectionStyling, displayProjectList, closeProject, createProject, createProjectEditForm, getProjectDetails, editFrontendProject, createNewProjectForm, getNewProject, createConfirmDeletionForm, deletePanelListProject, getProjectName, fillProjectName, fillProjectEditForm } from './modules/projects_DOM';
+import { createTaskForm, getTaskDetails, createFrontendTask, applyExistingTasks } from './modules/to-do_items_DOM';
 
 const backendService = (function () {
 
@@ -30,7 +30,7 @@ const backendService = (function () {
     const defaultProject = createBackendProject(
         'default list', 
         'list to begin tracking general todo items. ', 
-        '2026-02-10', 
+        '2026-02-01', 
         'Important', 
         null
     );
@@ -109,6 +109,9 @@ function userInterface() {
                     projectInterface.deleteButton.classList.remove('gone');
                 }
                 displayProjectList(projectInterface, backendProject, convertDate);
+                backendProject.tasks.forEach((task, index) => {
+                    applyExistingTasks(projectInterface.taskArea, task, convertDate);
+                });
                 projectEditForm.submitButton.addEventListener('click', () => {
                     if (projectEditForm.titleInput.value === '') {
                         addErrorStyling(projectEditForm);
@@ -141,6 +144,13 @@ function userInterface() {
         }
     });
 
+    projectInterface.closeButton.addEventListener('click', () => {
+        console.log(`tell me the number of tasks here: ${projectInterface.taskArea.children.length}`);
+        while (projectInterface.taskArea.firstChild) {
+            projectInterface.taskArea.removeChild(projectInterface.taskArea.firstChild);
+        }
+    });
+
     pageLayout.addProjectButton.addEventListener('click', () => {
         openForm(newProjectForm);
     });
@@ -160,9 +170,7 @@ function userInterface() {
             closeForm(newProjectForm);
             clearInputs(newProjectForm);
             closeProject(projectInterface.project);
-
         }
-        
     });
 
     newProjectForm.module.addEventListener('click', () => {
@@ -215,14 +223,22 @@ function userInterface() {
         const taskDetails = getTaskDetails(newTaskForm);
         console.log(taskDetails);
         makeProject.MASTER_STORAGE.forEach((backendProject, index) => {
-            if (projectInterface.projectTitle.textContent === backendProject.title) {
+            if (newTaskForm.titleInput.value === '') {
+                addErrorStyling(newTaskForm);
+            } else if (newTaskForm.titleInput.value !== '' && projectInterface.projectTitle.textContent === backendProject.title) {
                 backendService.createBackendTask(taskDetails.taskTitle, taskDetails.taskDescription, taskDetails.taskDueDate, taskDetails.taskPriority, backendProject);
-                console.log(`we addted this task to ${backendProject.title}`);
+                const newTask = createFrontendTask(projectInterface.taskArea, taskDetails, convertCalendarDate);
+                console.log(`we added the task '${taskDetails.taskTitle}' to ${backendProject.title}`);
+                closeForm(newTaskForm);
+                clearInputs(newTaskForm);
             }
         });
-        
-        const newTask = createFrontendTask(projectInterface.taskArea, taskDetails);
-        closeForm(newTaskForm);
+    });
+
+    newTaskForm.module.addEventListener('click', () => {
+        if (newTaskForm.titleInput.value !== '') {
+            removeErrorStyling(newTaskForm);
+        }
     });
 };
 userInterface();
@@ -230,4 +246,4 @@ userInterface();
 
 console.log('------------------------');
 console.log('REMINDER: 12/1 apply tasks to projects');
-console.log('REMINDER: 12/1 edit the frontend task functions to display the correct tasks per project and remove all children from task area when closing project');
+console.log('REMINDER: 12/2 need to add editing and deleting to tasks in the frontend');
