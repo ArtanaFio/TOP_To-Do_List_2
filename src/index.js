@@ -122,15 +122,20 @@ function userInterface() {
                 backendProject.tasks.forEach((task, index) => {
                     applyExistingTasks(projectInterface.taskArea, task, convertDate);
                 });
-                projectEditForm.submitButton.addEventListener('click', () => {
+                projectEditForm.submitButton.onclick = () => {
                     if (projectEditForm.titleInput.value === '') {
                         addErrorStyling(projectEditForm);
                     } else {
                         editFrontendProject(projectInterface, projectEditForm, convertCalendarDate);
                         backendService.editBackendProject(backendProject, getProjectDetails(projectEditForm));
+                        for (let i = 0; i <panelList.children.length; i++) {
+                            if (panelList.children[i].classList.contains('selected')) {
+                                panelList.children[i].textContent = backendProject.title;
+                            }
+                        }
                         closeForm(projectEditForm);
                     }
-                });
+                };
             }
         });
     });
@@ -303,4 +308,3 @@ userInterface();
 
 console.log('------------------------');
 console.log('REMINDER: 12/2 need to add deleting to tasks in the frontend');
-console.log("REMINDER: 12/7 issue: when I edited the project's title, the panel list did not update as expected");
