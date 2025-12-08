@@ -340,7 +340,3 @@ export function getProjectName(list) {
         }
     }
 };
-
-export function fillProjectName(formSpace, projectName) {
-    formSpace.textContent = projectName;
-};

@@ -145,3 +145,24 @@ export function editFrontendTask(frontendTask, editForm, convertCalendarDate) {
     }
     frontendTask[4].textContent = editForm.priorityBox.value;
 };
+
+export function createTaskDeleteForm(container) {
+    const module = makeElement('div', '', 'transparent-box gone', '', container);
+    const formContainer = makeElement('div', '', 'delete-form-container', '', module);
+    const form = makeElement('form', '', '', '', formContainer);
+    const formFieldset = makeElement('fieldset', '', '', '', form);
+    const formLegend = makeElement('legend', '', '', '', formFieldset);
+    const formLegendText = makeElement('span', '', '', 'Do you want to delete ', formLegend);
+    const taskSpace = makeElement('span', '', '', '', formLegend);
+    const questionMark = makeElement('span', '', '', '?', formLegend);
+    const formButtonBox = makeElement('div', '', 'form-button-box', '', formFieldset);
+    const noButton = makeButton('', 'button', 'cancel-button', 'No', formButtonBox);
+    const yesButton = makeButton('', 'button', 'submit-button', 'Yes', formButtonBox);
+
+    return {
+        module: module,
+        taskSpace: taskSpace,
+        noButton: noButton,
+        yesButton: yesButton
+    };
+};

@@ -12,7 +12,6 @@ class makeTodoItem {
         this.description = description ? description.trim(): "";
         this.dueDate = dueDate ? this.constructor.parseLocalDate(dueDate) : null; // date object, default to null if not specified
         this.priority = priority;
-        this.index = null;
     }
 
     static parseLocalDate(dueDate) {

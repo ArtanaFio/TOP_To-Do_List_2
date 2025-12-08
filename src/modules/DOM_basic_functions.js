@@ -147,3 +147,7 @@ export function addErrorStyling(formInterface) {
 export function removeErrorStyling(formInterface) {
     formInterface.titleInput.classList.remove('error-input');
 };
+
+export function fillItemName(nameHolder, name) {
+    nameHolder.textContent = name;
+};
