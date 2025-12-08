@@ -63,13 +63,13 @@ export function createProject(container, editFormInterface) {
     const mainPropertyBox = makeElement('div', '', 'all-property-div', '', projectDetailBox);
     const descriptionBox = makeElement('div', '', 'property-box', '', mainPropertyBox);
     const descriptionHeader = makeElement('h3', '', 'property-header', 'Description:', descriptionBox);
-    const projectDescription = makeElement('p', '', 'project-description', '', descriptionBox);
+    const projectDescription = makeElement('p', '', 'project-description project-p', '', descriptionBox);
     const dateBox = makeElement('div', '', 'property-box', '', mainPropertyBox);
     const dateHeader = makeElement('h3', '', 'property-header', 'Due Date:', dateBox);
-    const projectDueDate = makeElement('p', '', 'project-due-date', '', dateBox);
+    const projectDueDate = makeElement('p', '', 'project-due-date project-p', '', dateBox);
     const priorityBox = makeElement('div', '', 'property-box', '', mainPropertyBox);
     const priorityHeader = makeElement('h3', '', 'property-header', 'Priority:', priorityBox);
-    const projectPriority = makeElement('p', '', 'project-priority', '', priorityBox);
+    const projectPriority = makeElement('p', '', 'project-priority project-p', '', priorityBox);
     const taskBox = makeElement('div', '', 'task-box', '', project);
     const taskArea = makeElement('div', '', 'task-area', '', taskBox);
     const taskButtonBox = makeElement('div', '', 'task-button-box', '', taskBox);

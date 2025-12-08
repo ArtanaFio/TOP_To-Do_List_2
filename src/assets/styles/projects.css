@@ -136,7 +136,7 @@ button {
     justify-content: flex-end;
 }
 
-p {
+.project-p {
     font-size: 14px;
     height: 100%;
     display: flex;

@@ -34,14 +34,19 @@ export function convertDate(longDate) {
 
 export function dateForInput(longDate) {
     const year = longDate.getFullYear();
-    const month = longDate.getMonth() + 1;
-    const day = longDate.getDate();
-    let dateString;
-    if (month < 10) {
-        dateString = `${year}-0${month}-${day}`;
+    let month;
+    if (longDate.getMonth() + 1 < 10) {
+        month = `0${longDate.getMonth() + 1}`;
     } else {
-        dateString = `${year}-${month}-${day}`;
+        month = longDate.getMonth() + 1;
     }
+    let day;
+    if (longDate.getDate() < 10) {
+        day = `0${longDate.getDate()}`;
+    } else {
+        day = longDate.getDate();
+    }
+    const dateString = `${year}-${month}-${day}`;
     return dateString;
 };
 
