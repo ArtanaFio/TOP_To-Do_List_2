@@ -57,22 +57,33 @@ export function getTaskDetails(form) {
 };
 
 export function applyExistingTasks(container, backendTask, convertDate) {
-    const taskBox = makeElement('div', '', 'task', '', container);
-    const emptyCircle = makeElement('div', '', 'empty-circle', '', taskBox);
-    const title = makeElement('p', '', 'task-text title-id existing-property', backendTask.title, taskBox);
-    const description = makeElement('p', '', 'task-text description-id', '', taskBox);
-    if (backendTask.description) {
-        description.textContent = backendTask.description
-        description.classList.add('existing-property');
-    }
-    const dueDate = makeElement('p', '', 'task-text date-id', '', taskBox);
+    const fullTaskBox = makeElement('div', '', 'full-task-box', '', container);
+    const taskBox = makeElement('div', '', 'task', '', fullTaskBox);
+    const mainBox = makeElement('div', '', 'main-box', '', taskBox);
+    const emptyCircle = makeElement('div', '', 'empty-circle', '', mainBox);
+    const title = makeElement('p', '', 'task-text title-id existing-property', backendTask.title, mainBox);
+    const dateLabel = makeElement('p', '', 'date-label', '', mainBox);
+    const dueDate = makeElement('p', '', 'date-id', '', mainBox);
     if (backendTask.dueDate) {
+        dateLabel.textContent = 'Due:';
         dueDate.textContent = convertDate(backendTask.dueDate);
         dueDate.classList.add('existing-property');
     }
-    const priority = makeElement('p', '', 'task-text priority-id existing-property', backendTask.priority, taskBox);
-    const editButton = makeButton('', 'button', 'task-edit-button existing-property', 'Edit', taskBox);
-    const deleteButton = makeButton('', 'button', 'task-delete-button', 'Delete', taskBox);
+    const hiddenDetailsBox = makeElement('div', '', 'hidden-box gone', '', fullTaskBox);
+    const leftBox = makeElement('div', '', 'left', '', hiddenDetailsBox);
+    const descriptionLabel = makeElement('p', '', 'hidden-label', 'Description:', leftBox);
+    const description = makeElement('p', '', 'task-text description-id', '', leftBox);
+    if (backendTask.description) {
+        description.textContent = backendTask.description
+    } else {
+        description.textContent = 'none';
+    }
+    const rightBox = makeElement('div', '', 'right', '', hiddenDetailsBox);
+    const priorityLabel = makeElement('p', '', 'hidden-label', 'Priority:', rightBox);
+    const priority = makeElement('p', '', 'priority-id existing-property', backendTask.priority, rightBox);
+    const buttonBox = makeElement('div', '', 'mini-button-box', '', taskBox);
+    const editButton = makeButton('', 'button', 'task-edit-button gone', 'Edit', buttonBox);
+    const deleteButton = makeButton('', 'button', 'task-delete-button gone', 'Delete', buttonBox);
 };
 
 export function createTaskEditForm(container) {
@@ -126,24 +137,20 @@ export function fillTaskEditDetails(form, properties, dateForInput) {
     form.priorityBox.value = properties.priority;
 };
 
-export function editFrontendTask(frontendTask, editForm, convertCalendarDate) {
+export function editFrontendTask(frontendTask, newDescription, newPriority, editForm, convertCalendarDate) {
     frontendTask[1].textContent = editForm.titleInput.value;
     if (editForm.descriptionInput.value !== '') {
-        frontendTask[2].textContent = editForm.descriptionInput.value;
-        frontendTask[2].classList.add('existing-property');
+        newDescription.textContent = editForm.descriptionInput.value;
     } else if (editForm.descriptionInput.value === '') {
-        frontendTask[2].textContent = '';
-        frontendTask[2].classList.remove('existing-property');
+        newDescription.textContent = '';
     }
     
     if (convertCalendarDate(editForm.dueDateDropDownBox.value) !== '') {
         frontendTask[3].textContent = convertCalendarDate(editForm.dueDateDropDownBox.value);
-        frontendTask[3].classList.add('existing-property');
     } else {
-        frontendTask[3].textContent = "";
-        frontendTask[3].classList.remove('existing-property');
+        frontendTask[3].textContent = "no due date";
     }
-    frontendTask[4].textContent = editForm.priorityBox.value;
+    newPriority.textContent = editForm.priorityBox.value;
 };
 
 export function createTaskDeleteForm(container) {

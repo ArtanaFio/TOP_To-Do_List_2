@@ -6,10 +6,10 @@ import makeProject from './modules/projects';
 import makeTodoItem from './modules/to-do_items';
 import { editBackendProject, deleteBackEndTask } from './modules/projects';
 import { editBackendTask } from './modules/to-do_items';
-import { titleCase, lowerCase, trim, getTodayDate, convertDate, dateForInput, convertCalendarDate } from './modules/utility';
-import { clearInputs, openForm, closeForm, addErrorStyling, removeErrorStyling, fillItemName } from './modules/DOM_basic_functions';
+import { titleCase, lowerCase, trim, getTodayDate, convertDate, dateForInput, convertCalendarDate, singleWhitespace } from './modules/utility';
+import { clearInputs, openForm, closeForm, addErrorStyling, removeErrorStyling, fillItemName, sameTitle, notSameTitle } from './modules/DOM_basic_functions';
 import { createPageLayout } from './modules/main_ui';
-import { createPanelList, addtoPanelList, applyProjectSelectionStyling, displayProjectList, closeProject, createProject, createProjectEditForm, getProjectDetails, editFrontendProject, createNewProjectForm, getNewProject, createConfirmDeletionForm, deletePanelListProject, getProjectName, fillProjectEditForm } from './modules/projects_DOM';
+import { createPanelList, addtoPanelList, applyProjectSelectionStyling, displayProjectList, fillNewProjectList, createProject, createProjectEditForm, getProjectDetails, editFrontendProject, createNewProjectForm, getNewProject, createConfirmDeletionForm, deletePanelListProject, getProjectName, fillProjectEditForm, displayDefaultFirst, styleCurrentProject } from './modules/projects_DOM';
 import { createTaskForm, getTaskDetails, applyExistingTasks, fillTaskEditDetails, createTaskEditForm, createTaskDeleteForm, editFrontendTask } from './modules/to-do_items_DOM';
 
 const backendService = (function () {
@@ -58,10 +58,8 @@ const backendService = (function () {
         project.addTask(task);
         return task;
     }
-    createBackendTask('Task 1', 'first task', '2025-01-01', 'Minor', defaultProject);
-    createBackendTask('Task 2', 'second task', '2025-02-02', 'Important', defaultProject);
-    createBackendTask('Task 3', 'third task', '2025-03-13', 'Urgent', defaultProject);
     createBackendTask('Testing task', 'I just want to see how this behaves', '2026-10-28', 'Minor', defaultProject);
+    createBackendTask('capture the raccoon', 'details', null, 'Important', defaultProject);
 
     if (process.env.NODE_ENV === "development") {
         window.titleCase = titleCase;
@@ -100,7 +98,8 @@ function userInterface() {
     const projectEditForm = createProjectEditForm(document.body);
     const projectInterface = createProject(pageLayout.rightPanel, projectEditForm);
     const newProjectForm = createNewProjectForm(document.body);
-    applyProjectSelectionStyling(panelList, projectInterface.closeButton, newProjectForm.submitButton);
+    applyProjectSelectionStyling(panelList, newProjectForm.submitButton);
+    displayDefaultFirst(displayProjectList, projectInterface, makeProject.MASTER_STORAGE[0], convertDate, applyExistingTasks, projectInterface.taskArea, panelList.children[0]);
 
     panelList.addEventListener('click', (e) => {
         while (projectInterface.taskArea.firstChild) {
@@ -154,12 +153,6 @@ function userInterface() {
         }
     });
 
-    projectInterface.closeButton.addEventListener('click', () => {
-        while (projectInterface.taskArea.firstChild) {
-            projectInterface.taskArea.removeChild(projectInterface.taskArea.firstChild);
-        }
-    });
-
     pageLayout.addProjectButton.addEventListener('click', () => {
         openForm(newProjectForm);
     });
@@ -167,26 +160,44 @@ function userInterface() {
     newProjectForm.cancelButton.addEventListener('click', () => {
         clearInputs(newProjectForm);
         closeForm(newProjectForm);
+        removeErrorStyling(newProjectForm);
+        notSameTitle(newProjectForm);
     });
 
-    newProjectForm.submitButton.addEventListener('click', () => {
-        const newProjectDetails = getNewProject(newProjectForm);
+    newProjectForm.submitButton.onclick = () => {
+        const existingProject = makeProject.MASTER_STORAGE.find(backendProject => backendProject.title === titleCase(newProjectForm.titleInput.value.trim()));
         if (newProjectForm.titleInput.value === '') {
             addErrorStyling(newProjectForm);
+            newProjectForm.module.addEventListener('click', () => {
+                if (newProjectForm.titleInput.value !== '') {
+                    removeErrorStyling(newProjectForm);
+                }
+            });
+        } else if (existingProject) {
+            sameTitle(newProjectForm);
+            newProjectForm.module.addEventListener('click', () => {
+                const newMatchTitle = makeProject.MASTER_STORAGE.find(backendProject => backendProject.title === titleCase(singleWhitespace(newProjectForm.titleInput.value)));
+                if (!newMatchTitle) {
+                    notSameTitle(newProjectForm);
+                }
+            });
         } else {
-            const newProject = backendService.createBackendProject(newProjectDetails.title, newProjectDetails.description, newProjectDetails.dueDate, newProjectDetails.priority, newProjectDetails.label);
+            removeErrorStyling(newProjectForm);
+            notSameTitle(newProjectForm);
+            const newProjectDetails = getNewProject(newProjectForm);
+            const newProject = backendService.createBackendProject(singleWhitespace(newProjectDetails.title), newProjectDetails.description, newProjectDetails.dueDate, newProjectDetails.priority, newProjectDetails.label);
             addtoPanelList(newProject, panelList);
+            while (projectInterface.taskArea.firstChild) {
+                projectInterface.taskArea.removeChild(projectInterface.taskArea.firstChild);
+            }
+            projectInterface.deleteButton.classList.add('flexy');
+            projectInterface.deleteButton.classList.remove('gone');
+            fillNewProjectList(projectInterface, newProjectDetails, titleCase, convertCalendarDate);
+            styleCurrentProject(panelList, projectInterface.projectTitle);
             closeForm(newProjectForm);
             clearInputs(newProjectForm);
-            closeProject(projectInterface.project);
         }
-    });
-
-    newProjectForm.module.addEventListener('click', () => {
-        if (newProjectForm.titleInput.value !== '') {
-            removeErrorStyling(newProjectForm);
-        }
-    });
+    };
 
     const deleteProjectForm = createConfirmDeletionForm(document.body);
     projectInterface.deleteButton.addEventListener('click', () => {
@@ -209,7 +220,11 @@ function userInterface() {
             }
         }
         closeForm(deleteProjectForm);
-        closeProject(projectInterface.project);
+        while (projectInterface.taskArea.firstChild) {
+            projectInterface.taskArea.removeChild(projectInterface.taskArea.firstChild);
+        }
+        displayDefaultFirst(displayProjectList, projectInterface, makeProject.MASTER_STORAGE[0], convertDate, applyExistingTasks, projectInterface.taskArea, panelList.children[0]);
+
     });
 
     const taskArea = projectInterface.taskArea;
@@ -221,6 +236,8 @@ function userInterface() {
     });
 
     newTaskForm.cancelButton.addEventListener('click', () => {
+        removeErrorStyling(newTaskForm);
+        notSameTitle(newTaskForm);
         closeForm(newTaskForm);
         clearInputs(newTaskForm);
     });
@@ -228,8 +245,22 @@ function userInterface() {
     newTaskForm.submitButton.addEventListener('click', () => {
         const taskDetails = getTaskDetails(newTaskForm);
         makeProject.MASTER_STORAGE.forEach((backendProject, index) => {
+            const existingTask = backendProject.tasks.find(backendTask => backendTask.title === titleCase(singleWhitespace(newTaskForm.titleInput.value)));
             if (newTaskForm.titleInput.value === '') {
                 addErrorStyling(newTaskForm);
+                newTaskForm.module.addEventListener('click', () => {
+                    if (newTaskForm.titleInput.value !== '') {
+                        removeErrorStyling(newTaskForm);
+                    }
+                });
+            } else if (existingTask) {
+                sameTitle(newTaskForm);
+                newTaskForm.module.addEventListener('click', () => {
+                const newMatchTitle = backendProject.tasks.find(backendTask => backendTask.title === titleCase(singleWhitespace(newTaskForm.titleInput.value)));
+                if (!newMatchTitle) {
+                    notSameTitle(newTaskForm);
+                }
+            });
             } else if (newTaskForm.titleInput.value !== '' && projectInterface.projectTitle.textContent === backendProject.title) {
                 while (projectInterface.taskArea.firstChild) {
                     projectInterface.taskArea.removeChild(projectInterface.taskArea.firstChild);
@@ -244,12 +275,6 @@ function userInterface() {
         });
     });
 
-    newTaskForm.module.addEventListener('click', () => {
-        if (newTaskForm.titleInput.value !== '') {
-            removeErrorStyling(newTaskForm);
-        }
-    });
-
     const taskEditForm = createTaskEditForm(document.body);
     const taskDeleteForm = createTaskDeleteForm(document.body);
 
@@ -257,20 +282,25 @@ function userInterface() {
         makeProject.MASTER_STORAGE.forEach((backendProject, ProjectIndex) => {
             if (projectInterface.projectTitle.textContent === backendProject.title) {
                 backendProject.tasks.forEach((backendTask, taskIndex) => {
-                    if (backendTask.title === e.target.parentNode.children[1].textContent && e.target.classList.contains('task-edit-button')) {
+                    if (e.target.classList.contains('task-edit-button') && backendTask.title === e.target.parentNode.parentNode.children[0].children[1].textContent) {
                         fillTaskEditDetails(taskEditForm, backendTask, dateForInput);
                         openForm(taskEditForm);
                         taskEditForm.submitButton.onclick = () => {
                             if (taskEditForm.titleInput.value === '') {
                                 addErrorStyling(taskEditForm);
+                                taskEditForm.module.addEventListener('click', () => {
+                                    if (taskEditForm.titleInput.value !== '') {
+                                        removeErrorStyling(taskEditForm);
+                                    }
+                                });
                             } else {
                                 removeErrorStyling(taskEditForm);
-                                editFrontendTask(e.target.parentNode.children, taskEditForm, convertCalendarDate);
+                                editFrontendTask(e.target.parentNode.parentNode.children[0].children, e.target.parentNode.parentNode.parentNode.children[1].children[0].children[1], e.target.parentNode.parentNode.parentNode.children[1].children[1].children[1], taskEditForm, convertCalendarDate);
                                 closeForm(taskEditForm);
                                 editBackendTask(backendTask, taskEditForm.titleInput.value, taskEditForm.descriptionInput.value, taskEditForm.dueDateDropDownBox.value, taskEditForm.priorityBox.value);
                             }
                         };
-                    } else if (backendTask.title === e.target.parentNode.children[1].textContent && e.target.classList.contains('task-delete-button')) {
+                    } else if (e.target.classList.contains('task-delete-button') && backendTask.title === e.target.parentNode.parentNode.children[0].children[1].textContent) {
                         openForm(taskDeleteForm);
                         fillItemName(taskDeleteForm.taskSpace, backendTask.title);
                     }
@@ -279,15 +309,48 @@ function userInterface() {
         });
     });
 
+    projectInterface.taskArea.addEventListener('click', (e) => {
+        if (e.target.classList.contains('empty-circle')) {
+            e.target.classList.add('full-circle');
+            e.target.classList.remove('empty-circle');
+            e.target.parentNode.children[1].classList.add('strike-through');
+        } else if (e.target.classList.contains('full-circle')) {
+            console.log(e.target);
+            e.target.classList.remove('full-circle');
+            e.target.classList.add('empty-circle');
+            e.target.parentNode.children[1].classList.remove('strike-through');
+        }
+    });
+
+    projectInterface.taskArea.addEventListener('mouseover', (e) => {
+        const child = e.target.closest('.full-task-box');
+        if (!child || !taskArea.contains(child)) return;
+
+        child.children[0].classList.add('task-hover');
+        child.children[0].children[1].children[0].classList.add('flexy');
+        child.children[0].children[1].children[0].classList.remove('gone');
+        child.children[0].children[1].children[1].classList.add('flexy');
+        child.children[0].children[1].children[1].classList.remove('gone');
+        child.children[1].classList.add('flexy');
+        child.children[1].classList.remove('gone');
+    });
+
+    projectInterface.taskArea.addEventListener('mouseout', (e) => {
+        const child = e.target.closest('.full-task-box');
+        if (!child || !taskArea.contains(child)) return;
+
+        child.children[0].classList.remove('task-hover');
+        child.children[0].children[1].children[0].classList.remove('flexy');
+        child.children[0].children[1].children[0].classList.add('gone');
+        child.children[0].children[1].children[1].classList.remove('flexy');
+        child.children[0].children[1].children[1].classList.add('gone');
+        child.children[1].classList.remove('flexy');
+        child.children[1].classList.add('gone');
+    });
+
     taskEditForm.cancelButton.addEventListener('click', () => {
         closeForm(taskEditForm);
         clearInputs(taskEditForm);
-    });
-
-    taskEditForm.module.addEventListener('click', () => {
-        if (taskEditForm.titleInput.value !== '') {
-            removeErrorStyling(taskEditForm);
-        }
     });
 
     taskDeleteForm.noButton.addEventListener('click', () => {
@@ -314,7 +377,8 @@ function userInterface() {
 };
 userInterface();
 
-
-console.log('------------------------');
+//console.log(`window height: '${document.body.offsetHeight}px'`);
+//console.log(`window width: '${document.body.offsetWidth}px'`);
+console.log('-----');
 console.log('REMINDER: 12/4 Get rid of the test projects and tasks from backendService later');
-console.log('REMINDER: 12/8 add persistence');
+console.log('REMINDER: 12/8 add persistence by using Web Storage API');

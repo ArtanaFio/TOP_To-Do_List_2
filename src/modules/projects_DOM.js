@@ -12,7 +12,7 @@ export function addtoPanelList(projectDetails, panelList) {
     const projectName = makeElement('li', '', 'project-name', projectDetails.title, panelList);
 };
 
-export function applyProjectSelectionStyling(parentContainer, closeProjectButton, addProjectSubmitButton) {
+export function applyProjectSelectionStyling(parentContainer, addProjectSubmitButton) {
     parentContainer.addEventListener('mouseenter', (e) => {
         if (e.target.classList.contains('project-name')) {
             if (!e.target.classList.contains('selected')) {
@@ -41,22 +41,16 @@ export function applyProjectSelectionStyling(parentContainer, closeProjectButton
             e.target.classList.remove('pre-select');
         }
 
-        closeProjectButton.addEventListener('click', () => {
-            e.target.classList.remove('selected');
-        });
-
         addProjectSubmitButton.addEventListener('click', () => {
             e.target.classList.remove('selected');
         });
     });
 };
 
-//makes the basic project interface
 export function createProject(container, editFormInterface) {
-    const project = makeElement('div', '', 'project gone', '', container);
+    const project = makeElement('div', '', 'project flexy', '', container);
     const projectDetailBox = makeElement('div', '', 'detail-box', '', project);
     const projectButtonBox = makeElement('div', '', 'project-button-div', '', projectDetailBox);
-    const doubleButtonBox = makeElement('div', '', 'double-button-div', '', projectButtonBox);
     const titleAndLabelBox = makeElement('div', '', 'title-label-div', '', projectDetailBox);
     const projectTitle = makeElement('h1', '', 'project-title', '', titleAndLabelBox);
     const projectLabel = makeElement('h4', '', 'project-label', 'LABEL', titleAndLabelBox);
@@ -71,16 +65,12 @@ export function createProject(container, editFormInterface) {
     const priorityHeader = makeElement('h3', '', 'property-header', 'Priority:', priorityBox);
     const projectPriority = makeElement('p', '', 'project-priority project-p', '', priorityBox);
     const taskBox = makeElement('div', '', 'task-box', '', project);
-    const taskArea = makeElement('div', '', 'task-area', '', taskBox);
+    const taskAreaContainer = makeElement('div', '', 'task-area-container', '', taskBox);
+    const taskArea = makeElement('div', '', 'task-area', '', taskAreaContainer);
     const taskButtonBox = makeElement('div', '', 'task-button-box', '', taskBox);
     const addTaskButton = makeButton('', 'button', 'add-button', 'Add Task', taskButtonBox);
-    const deleteButton = makeButton('', 'button', 'delete-button', 'Delete', doubleButtonBox);
-    const editButton = makeButton('', 'button', 'edit-button', 'Edit', doubleButtonBox);
-    const closeButton = makeButton('', 'button', 'close-button', 'Close', projectButtonBox);
-    
-    closeButton.addEventListener('click', () => {
-        closeProject(project);
-    });
+    const editButton = makeButton('', 'button', 'edit-button', 'Edit', projectButtonBox);
+    const deleteButton = makeButton('', 'button', 'delete-button', 'Delete', projectButtonBox);
 
     //console.log(`project description height: ${projectDescription.offsetHeight}px`);
     //console.log(`h1 font size: ${window.getComputedStyle(projectTitle).fontSize}`);
@@ -91,7 +81,6 @@ export function createProject(container, editFormInterface) {
         project: project,
         deleteButton: deleteButton,
         editButton: editButton,
-        closeButton: closeButton,
         projectTitle: projectTitle,
         projectDescription: projectDescription,
         dateBox: dateBox,
@@ -106,8 +95,6 @@ export function createProject(container, editFormInterface) {
 
 //displays the project in the viewport
 export function displayProjectList(projectInterface, projectDetails, convertDate) {
-    projectInterface.project.classList.add('flexy');
-    projectInterface.project.classList.remove('gone');
     projectInterface.projectTitle.textContent = projectDetails.title;
 
     if (projectDetails.description) {
@@ -134,6 +121,35 @@ export function displayProjectList(projectInterface, projectDetails, convertDate
     } else {
         projectInterface.projectLabel.textContent = 'unlabeled';
 
+    }
+};
+
+export function fillNewProjectList(projectInterface, projectDetails, titleCase, convertDate) {
+    projectInterface.projectTitle.textContent = titleCase(projectDetails.title);
+
+    if (projectDetails.description) {
+        projectInterface.projectDescription.textContent = projectDetails.description;
+        if (projectDetails.description.length > 100) {
+            projectInterface.projectDescription.classList.add('too-much-text');
+        } else {
+            projectInterface.projectDescription.classList.remove('too-much-text');
+        }
+    } else {
+        projectInterface.projectDescription.textContent = 'This project wants to be mysterious';
+    }
+    
+    if (projectDetails.dueDate) {
+        projectInterface.projectDueDate.textContent = convertDate(projectDetails.dueDate);
+    } else {
+        projectInterface.projectDueDate.textContent = 'no due date';
+    }
+
+    projectInterface.projectPriority.textContent = projectDetails.priority;
+
+    if (projectDetails.label === null || projectDetails.label === 'None') {
+        projectInterface.projectLabel.textContent = 'unlabeled';
+    } else {
+        projectInterface.projectLabel.textContent = projectDetails.label;
     }
 };
 
@@ -340,3 +356,28 @@ export function getProjectName(list) {
         }
     }
 };
+
+export function displayDefaultFirst(display, ui, project, convertDate, applyTasks, taskArea, uiProject) {
+    ui.deleteButton.classList.add('gone');
+    
+    display(ui, project, convertDate);
+
+    project.tasks.forEach((task, index) => {
+        applyTasks(taskArea, task, convertDate);
+    });
+
+    uiProject.classList.add('selected');
+};
+
+export function styleCurrentProject(panelList, currentFrontendTitle) {
+    const projects = Array.from(panelList.children);
+    projects.forEach(project => {
+        if (project.classList.contains('selected')) {
+            project.classList.remove('selected');
+        } else if (project.textContent === currentFrontendTitle.textContent) {
+            project.classList.add('selected');
+        }
+    });
+
+};
+

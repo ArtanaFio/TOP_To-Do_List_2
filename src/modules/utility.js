@@ -72,3 +72,7 @@ export function convertCalendarDate(date) {
         return `${month}/${day}/${year}`;
     }
 };
+
+export function singleWhitespace(string) {
+    return string.replace(/\s+/g, ' ').trim();
+};

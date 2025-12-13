@@ -3,7 +3,6 @@
 }
 
 ul {
-    height: 100%;
     list-style: none;
     display: flex;
     flex-direction: column;
@@ -58,11 +57,6 @@ li:first-of-type {
     margin: 10px 10px 0px 10px;
 }
 
-.double-button-div {
-    display: flex;
-    gap: 5px;
-}
-
 button {
     cursor: pointer;
 }
@@ -76,15 +70,11 @@ button {
     font-weight: bold;
 }
 
-.edit-button, .close-button {
+.edit-button {
     font-size: 16px;
     background-color: white;
     border-radius: 50%;
     padding: 5px;
-}
-
-.close-button {
-    font-weight: bold;
 }
 
 .title-label-div {
@@ -171,6 +161,18 @@ button {
     flex: 1;
     display: flex;
     flex-direction: column;
+    min-height: 0;
+}
+
+.task-area-container {
+    display: flex;
+    flex: 10;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.task-area {
+    flex: 1;
 }
 
 .task-button-box {
@@ -178,11 +180,6 @@ button {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.task-area {
-    flex: 10;
-    border: 2px dashed blue;
 }
 
 .add-button {
@@ -223,6 +220,7 @@ form {
     display: flex;
     flex-direction: column;
 }
+
 fieldset {
     flex: 1;
     margin: 3%;
@@ -301,4 +299,30 @@ legend {
 .error-input {
     border-color: red;
     border-width: 2px;
+}
+
+@media (height < 645px) {
+    .form-container {
+        height: 369px;
+    }
+}
+
+@media (height < 620px) and (width < 550px) {
+    .form-container {
+        height: 100%;
+        width: 100%;
+        border-radius: 0;
+        flex: 1;
+    }
+
+    .transparent-box {
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+}
+
+@media (width < 950px) {
+    .form-container {
+        width: 513px;
+    }
 }

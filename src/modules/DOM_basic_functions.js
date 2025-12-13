@@ -151,3 +151,13 @@ export function removeErrorStyling(formInterface) {
 export function fillItemName(nameHolder, name) {
     nameHolder.textContent = name;
 };
+
+export function sameTitle(form) {
+    form.titleInput.style.borderWidth = '2px';
+    form.titleInput.style.borderColor = 'red';
+}
+
+export function notSameTitle(form) {
+    form.titleInput.style.borderWidth = '1px';
+    form.titleInput.style.borderColor = 'rgb(0, 97, 92)';
+}

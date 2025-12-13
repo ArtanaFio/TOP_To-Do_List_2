@@ -54,8 +54,21 @@
         <li>12/7 updated editFrontendTask to handle spacing, updated fillTaskEditDetails so dateForInput function is only ran if date exists</li>
         <li>12/7 fixed the newest task buttons not working by first removing all tasks from task area and using applyExistingTasks to apply all tasks after creating the new task in the backend. Did not need createFrontendTask. Have removed it.</li>
         <li>12/7 added a for loop to find the correct panelList child to update display the new title for the edited project</li>
-
         <li>12/8 implemented task deletion using array.find() to find the task I wanted to delete, and array.findIndex() to find its index and then applied backendService.deleteBackendTask, while loop to remove all tasks from task area, and applyExistingTasks to show only the tasks that hadn't been deleted</li>
+        
+        <li>12/9 prevented the left-panel from stretching and implemented scrolling when the panel list contain overflows</li>
+        <li>12/9 prevented the project from stretching and implemented scrolling when the task area overflows</li>
+        <li>12/9 used media queries to adjust the form dimensions when the viewport shrinks exceptionally smaller</li>
+        <li>12/10 redesigned task layout to only display title and due date. User clicks to expand task details and see buttons</li>
+        <li>12/10 redesigned the edit tasks function to work with the new task layout</li>
+        <li>12/12 got the task to expand and redid task-striking</li>
+        <li>12/12 fixed the frontend labeling of projects by specifying condition in fillNewProjectList</li>
+        <li>12/12 displayed defaultProject after deleting project instead of closing the project interface</li>
+        <li>12/12 removed the project close button and its associated functions because there was no point to close the project interface</li>
+        <li>12/12 moved the project delete button to the right side where the close button used to be</li>
+        <li>12/13 created singleWhitespace() to remove extra spaces between letters and other measures to prevent creating projects and tasks with the same name</li>
+        <li>12/13 made sure the cancel buttons also removed error styling</li>
+        <li>12/13 not yet committed -- </li>
     </ul>
 </body>
 </html>
