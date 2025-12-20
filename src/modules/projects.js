@@ -8,7 +8,7 @@ class makeProject {
     static LABELS = new Set(['Daily', 'Weekly', 'Monthly', 'Yearly']);
     static MASTER_STORAGE = []; // Central Storage for ALL lists, including the default list
 
-    constructor(title, description, dueDate, priority, label) {
+    constructor(title, description, dueDate, priority, label, tasks) {
         if (!title || !title.trim()) throw new Error("Title is required");
         if (!priority || !makeProject.PRIORITIES.has(priority)) throw new Error("Invalid priority");
 
@@ -114,13 +114,7 @@ class makeProject {
 
 export default makeProject;
 
-export function editBackendProject(project, properties) {
-    project.editTitle(properties[0]);
-    project.editDescription(properties[1]);
-    project.editDueDate(properties[2]);
-    project.editPriority(properties[3]);
-    project.editLabel(properties[4]);
-};
+
 
 export function deleteBackEndTask(project, index, task) {
     project.deleteTask(index);

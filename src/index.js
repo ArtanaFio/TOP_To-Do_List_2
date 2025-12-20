@@ -4,13 +4,14 @@ import './assets/styles/to-do_items.css';
 
 import makeProject from './modules/projects';
 import makeTodoItem from './modules/to-do_items';
-import { editBackendProject, deleteBackEndTask } from './modules/projects';
+import { deleteBackEndTask } from './modules/projects';
 import { editBackendTask } from './modules/to-do_items';
 import { titleCase, lowerCase, trim, getTodayDate, convertDate, dateForInput, convertCalendarDate, singleWhitespace } from './modules/utility';
 import { clearInputs, openForm, closeForm, addErrorStyling, removeErrorStyling, fillItemName, sameTitle, notSameTitle } from './modules/DOM_basic_functions';
 import { createPageLayout } from './modules/main_ui';
 import { createPanelList, addtoPanelList, applyProjectSelectionStyling, displayProjectList, fillNewProjectList, createProject, createProjectEditForm, getProjectDetails, editFrontendProject, createNewProjectForm, getNewProject, createConfirmDeletionForm, deletePanelListProject, getProjectName, fillProjectEditForm, displayDefaultFirst, styleCurrentProject } from './modules/projects_DOM';
 import { createTaskForm, getTaskDetails, applyExistingTasks, fillTaskEditDetails, createTaskEditForm, createTaskDeleteForm, editFrontendTask } from './modules/to-do_items_DOM';
+import { getProjects, fillProjectStorage, getTasks, fillTaskStorage, deleteTaskStorage } from './modules/local_storage';
 
 const backendService = (function () {
 
@@ -34,6 +35,14 @@ const backendService = (function () {
         'Important', 
         null
     );
+    
+    function editBackendProject(project, properties) {
+    project.editTitle(titleCase(trim(properties[0])));
+    project.editDescription(properties[1]);
+    project.editDueDate(properties[2]);
+    project.editPriority(properties[3]);
+    project.editLabel(properties[4]);
+};
 
     function deleteBackendProject(project) {
         if (project === defaultProject) {
@@ -58,8 +67,36 @@ const backendService = (function () {
         project.addTask(task);
         return task;
     }
-    createBackendTask('Testing task', 'I just want to see how this behaves', '2026-10-28', 'Minor', defaultProject);
-    createBackendTask('capture the raccoon', 'details', null, 'Important', defaultProject);
+
+    if (makeProject.MASTER_STORAGE.length === 1 && localStorage.length === 0) {
+        fillProjectStorage(makeProject.MASTER_STORAGE, dateForInput);
+        let task_key;
+        makeProject.MASTER_STORAGE.forEach((project, projectIndex) => {
+            task_key = project.title + '_Tasks';
+            fillTaskStorage(task_key, project.tasks, dateForInput);
+        });
+    } else {
+        let retrievedProjects = getProjects();
+        for (let i = 1; i < retrievedProjects.length; i++) {
+            createBackendProject(retrievedProjects[i].title, retrievedProjects[i].description, retrievedProjects[i].dueDate, retrievedProjects[i].priority, retrievedProjects[i].label);
+        }
+        for (let i = 0; i < localStorage.length; i++) {
+                let storageKey = localStorage.key(i);
+            if (storageKey !== 'Projects') {
+                let newStorageKey = storageKey.replace('_Tasks', '');
+                let retrievedTasks = getTasks(storageKey);
+                for (let i = 0; i < retrievedTasks.length; i++) {
+                    if (newStorageKey !== 'Default List') {
+                        makeProject.MASTER_STORAGE.forEach((backendProject, projectIndex) => {
+                            if (backendProject.title === newStorageKey) {
+                                createBackendTask(retrievedTasks[i].title, retrievedTasks[i].description, retrievedTasks[i].dueDate, retrievedTasks[i].priority, backendProject);
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    }
 
     if (process.env.NODE_ENV === "development") {
         window.titleCase = titleCase;
@@ -94,11 +131,17 @@ function userInterface() {
     const pageLayout = createPageLayout(pageSpace);
     const panelList = createPanelList(pageLayout.leftPanelContainer);
     const defaultProject = backendService.defaultProject;
-    const listedDefaultProject = addtoPanelList(defaultProject, panelList);
+    //const listedDefaultProject = addtoPanelList(defaultProject, panelList);
     const projectEditForm = createProjectEditForm(document.body);
     const projectInterface = createProject(pageLayout.rightPanel, projectEditForm);
     const newProjectForm = createNewProjectForm(document.body);
     applyProjectSelectionStyling(panelList, newProjectForm.submitButton);
+    //displayDefaultFirst(displayProjectList, projectInterface, makeProject.MASTER_STORAGE[0], convertDate, applyExistingTasks, projectInterface.taskArea, panelList.children[0]);
+    
+
+    makeProject.MASTER_STORAGE.forEach(backendProject => {
+        addtoPanelList(backendProject, panelList);
+    });
     displayDefaultFirst(displayProjectList, projectInterface, makeProject.MASTER_STORAGE[0], convertDate, applyExistingTasks, projectInterface.taskArea, panelList.children[0]);
 
     panelList.addEventListener('click', (e) => {
@@ -119,14 +162,30 @@ function userInterface() {
                 projectEditForm.submitButton.onclick = () => {
                     if (projectEditForm.titleInput.value === '') {
                         addErrorStyling(projectEditForm);
+                        projectEditForm.module.addEventListener('click', () => {
+                            if (projectEditForm.titleInput.value !== '') {
+                                removeErrorStyling(projectEditForm);
+                            }
+                        });
                     } else {
-                        editFrontendProject(projectInterface, projectEditForm, convertCalendarDate);
+                        let originalProjectTitle = backendProject.title;
                         backendService.editBackendProject(backendProject, getProjectDetails(projectEditForm));
+                        let newStorageKey = backendProject.title + '_Tasks';
+                        fillProjectStorage(makeProject.MASTER_STORAGE, dateForInput);
+                        for (let i = 0; i < localStorage.length; i++) {
+                            let taskKey = localStorage.key(i);
+                            let oldProjectTitle = taskKey.replace('_Tasks', '');
+                            if (localStorage.key(i) !== 'Projects' && oldProjectTitle === originalProjectTitle) {
+                                deleteTaskStorage(localStorage.key(i));
+                                fillTaskStorage(newStorageKey, backendProject.tasks, dateForInput);
+                            }
+                        }
                         for (let i = 0; i <panelList.children.length; i++) {
                             if (panelList.children[i].classList.contains('selected')) {
                                 panelList.children[i].textContent = backendProject.title;
                             }
                         }
+                        editFrontendProject(projectInterface, projectEditForm, titleCase, trim, convertCalendarDate);
                         closeForm(projectEditForm);
                     }
                 };
@@ -140,17 +199,12 @@ function userInterface() {
                 openForm(projectEditForm);
                 fillProjectEditForm(projectEditForm, backendProject, dateForInput);
             }
+
         });
     });
 
     projectEditForm.cancelButton.addEventListener('click', () => {
         closeForm(projectEditForm);
-    });
-
-    projectEditForm.module.addEventListener('click', () => {
-        if (projectEditForm.titleInput.value !== '') {
-            removeErrorStyling(projectEditForm);
-        }
     });
 
     pageLayout.addProjectButton.addEventListener('click', () => {
@@ -185,7 +239,9 @@ function userInterface() {
             removeErrorStyling(newProjectForm);
             notSameTitle(newProjectForm);
             const newProjectDetails = getNewProject(newProjectForm);
-            const newProject = backendService.createBackendProject(singleWhitespace(newProjectDetails.title), newProjectDetails.description, newProjectDetails.dueDate, newProjectDetails.priority, newProjectDetails.label);
+            const newProject = backendService.createBackendProject(singleWhitespace(newProjectDetails.title), newProjectDetails.description, newProjectDetails.dueDate, newProjectDetails.priority, newProjectDetails.label, null);
+            console.log(`new project's title: '${newProject.title}'`);
+            fillProjectStorage(makeProject.MASTER_STORAGE, dateForInput);
             addtoPanelList(newProject, panelList);
             while (projectInterface.taskArea.firstChild) {
                 projectInterface.taskArea.removeChild(projectInterface.taskArea.firstChild);
@@ -215,14 +271,19 @@ function userInterface() {
         for (let i = 0; i <  panelList.children.length; i++) {
             if (panelList.children[i].classList.contains('selected')) {
                 const deletedProject = makeProject.MASTER_STORAGE.find(backendProject => backendProject.title === panelList.children[i].textContent);
+                let storageKey = deletedProject.title + '_Tasks';
+                deleteTaskStorage(storageKey);
                 backendService.deleteBackendProject(deletedProject);
                 deletePanelListProject(panelList.children[i]);
             }
         }
+        fillProjectStorage(makeProject.MASTER_STORAGE, dateForInput);
+        
         closeForm(deleteProjectForm);
         while (projectInterface.taskArea.firstChild) {
             projectInterface.taskArea.removeChild(projectInterface.taskArea.firstChild);
         }
+        
         displayDefaultFirst(displayProjectList, projectInterface, makeProject.MASTER_STORAGE[0], convertDate, applyExistingTasks, projectInterface.taskArea, panelList.children[0]);
 
     });
@@ -266,7 +327,9 @@ function userInterface() {
                     projectInterface.taskArea.removeChild(projectInterface.taskArea.firstChild);
                 }
                 backendService.createBackendTask(taskDetails.taskTitle, taskDetails.taskDescription, taskDetails.taskDueDate, taskDetails.taskPriority, backendProject);
+                let task_Storage_key = backendProject.title + '_Tasks';
                 backendProject.tasks.forEach((task, index) => {
+                    fillTaskStorage(task_Storage_key, backendProject.tasks, dateForInput);
                     applyExistingTasks(projectInterface.taskArea, task, convertDate);
                 });
                 closeForm(newTaskForm);
@@ -295,9 +358,13 @@ function userInterface() {
                                 });
                             } else {
                                 removeErrorStyling(taskEditForm);
-                                editFrontendTask(e.target.parentNode.parentNode.children[0].children, e.target.parentNode.parentNode.parentNode.children[1].children[0].children[1], e.target.parentNode.parentNode.parentNode.children[1].children[1].children[1], taskEditForm, convertCalendarDate);
+                                editFrontendTask(e.target.parentNode.parentNode.children[0].children, e.target.parentNode.parentNode.parentNode.children[1].children[0].children[1], e.target.parentNode.parentNode.parentNode.children[1].children[1].children[1], taskEditForm, titleCase, trim, convertCalendarDate);
                                 closeForm(taskEditForm);
-                                editBackendTask(backendTask, taskEditForm.titleInput.value, taskEditForm.descriptionInput.value, taskEditForm.dueDateDropDownBox.value, taskEditForm.priorityBox.value);
+                                editBackendTask(backendTask, taskEditForm.titleInput.value, taskEditForm.descriptionInput.value, taskEditForm.dueDateDropDownBox.value, taskEditForm.priorityBox.value, titleCase, trim);
+                                let task_Storage_key = backendProject.title + '_Tasks';
+                                backendProject.tasks.forEach((task, index) => {
+                                    fillTaskStorage(task_Storage_key, backendProject.tasks, dateForInput);
+                                });
                             }
                         };
                     } else if (e.target.classList.contains('task-delete-button') && backendTask.title === e.target.parentNode.parentNode.children[0].children[1].textContent) {
@@ -366,7 +433,9 @@ function userInterface() {
                 while (projectInterface.taskArea.firstChild) {
                     projectInterface.taskArea.removeChild(projectInterface.taskArea.firstChild);
                 }
+                let task_Storage_key = backendProject.title + '_Tasks';
                 backendProject.tasks.forEach((task, index) => {
+                    fillTaskStorage(task_Storage_key, backendProject.tasks, dateForInput);
                     applyExistingTasks(projectInterface.taskArea, task, convertDate);
                 });
                 closeForm(taskDeleteForm);
@@ -374,11 +443,15 @@ function userInterface() {
         });
     });
 
+
 };
 userInterface();
 
 //console.log(`window height: '${document.body.offsetHeight}px'`);
 //console.log(`window width: '${document.body.offsetWidth}px'`);
-console.log('-----');
-console.log('REMINDER: 12/4 Get rid of the test projects and tasks from backendService later');
-console.log('REMINDER: 12/8 add persistence by using Web Storage API');
+//console.log('-----');
+//console.log('REMINDER: 12/4 Get rid of the test projects and tasks from backendService later');
+//console.log('REMINDER: 12/8 add persistence by using Web Storage API');
+//console.log('REMINDER: 12/18 need to delete tasks when the associated project is deleted');
+//console.log('REMINDER: 12/18 need to keep tasks when the associated project is edited');
+

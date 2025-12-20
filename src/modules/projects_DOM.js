@@ -229,8 +229,8 @@ export function fillProjectEditForm(editFormInterface, projectDetails, dateForIn
     
 };
 
-export function editFrontendProject(projectInterface, editForm, convertCalendarDate) {
-    projectInterface.projectTitle.textContent = editForm.titleInput.value;
+export function editFrontendProject(projectInterface, editForm, titleCase, trim, convertCalendarDate) {
+    projectInterface.projectTitle.textContent = titleCase(trim(editForm.titleInput.value));
     projectInterface.projectDescription.textContent = editForm.descriptionInput.value;
     if (convertCalendarDate(editForm.dueDateDropDownBox.value) !== ''){
         projectInterface.projectDueDate.textContent = convertCalendarDate(editForm.dueDateDropDownBox.value);

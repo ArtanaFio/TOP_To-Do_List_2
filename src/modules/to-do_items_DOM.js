@@ -137,18 +137,18 @@ export function fillTaskEditDetails(form, properties, dateForInput) {
     form.priorityBox.value = properties.priority;
 };
 
-export function editFrontendTask(frontendTask, newDescription, newPriority, editForm, convertCalendarDate) {
-    frontendTask[1].textContent = editForm.titleInput.value;
+export function editFrontendTask(frontendTask, newDescription, newPriority, editForm, titleCase, trim, convertCalendarDate) {
+    frontendTask[1].textContent = titleCase(trim(editForm.titleInput.value));
     if (editForm.descriptionInput.value !== '') {
         newDescription.textContent = editForm.descriptionInput.value;
     } else if (editForm.descriptionInput.value === '') {
-        newDescription.textContent = '';
+        newDescription.textContent = 'none';
     }
     
     if (convertCalendarDate(editForm.dueDateDropDownBox.value) !== '') {
         frontendTask[3].textContent = convertCalendarDate(editForm.dueDateDropDownBox.value);
     } else {
-        frontendTask[3].textContent = "no due date";
+        frontendTask[3].textContent = '';
     }
     newPriority.textContent = editForm.priorityBox.value;
 };

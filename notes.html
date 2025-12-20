@@ -68,7 +68,16 @@
         <li>12/12 moved the project delete button to the right side where the close button used to be</li>
         <li>12/13 created singleWhitespace() to remove extra spaces between letters and other measures to prevent creating projects and tasks with the same name</li>
         <li>12/13 made sure the cancel buttons also removed error styling</li>
-        <li>12/13 not yet committed -- </li>
+        <li>12/17 when I refresh the page after adding a new project's task, I'm getting uncaught typeError: longDate.getFullYear is not a function at convertDate (utility.js 26:1), applyExistingTasks(to-do_items_DOM.js 69:1), index.js:153:39,152:1,144:20</li>
+        <li>this tells me there's a problem with displaying tasks using applyExistingTasks at panelList event listener when I click on the project to display it.</li>
+        <li>inside applyExistingTasks at line 69 is where I'm trying to to display the due date as convertDate(backendTask.dueDate)</li>
+        <li>the problem that I see is that the backend task saved the due date as a string instead of a date object</li>
+
+        <li>12/15 applying localStorage functions. Had to edit dueDate format in storeProject() to get it to convert back to a makeProject object later</li>
+        <li>12/16 adjusted fillStorage() to accept an array as parameter so that I could just add makeProject.MASTER_STORAGE. It was easier and ensures the backend projects are properly added/stored in local storage</li>
+        <li>12/18 created fillTaskStorage and specified variables to create custom storage keys for each project-s task array</li>
+        <li>12/19 created getTasks and deleteTaskStorage to remove task storage keys associated with deleted projects.</li>
+        
     </ul>
 </body>
 </html>

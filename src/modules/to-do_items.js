@@ -59,8 +59,8 @@ class makeTodoItem {
 
 export default makeTodoItem;
 
-export function editBackendTask(task, title, description, dueDate, priority) {
-    task.editTitle(title);
+export function editBackendTask(task, title, description, dueDate, priority, titleCase, trim) {
+    task.editTitle(titleCase(trim(title)));
     task.editDescription(description);
     task.editDueDate(dueDate);
     task.editPriority(priority);
