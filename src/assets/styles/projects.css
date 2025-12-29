@@ -1,328 +1,367 @@
 :root {
-    --list-gap: 10px;
+  --list-gap: 10px;
 }
 
 ul {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: var(--list-gap);
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--list-gap);
 }
 
 li {
-    font-size: 1.5rem;
-    text-align: center;
-    cursor: pointer;
-    padding: 3px;
+  font-size: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  padding: 3px;
 }
 
 li:first-of-type {
-    margin-top: var(--list-gap);
+  margin-top: var(--list-gap);
 }
 
 .pre-select {
-    font-weight: bold;
-    background-color: rgb(220, 255, 253);
+  font-weight: bold;
+  background-color: rgb(220, 255, 253);
 }
 
 .selected {
-    color: rgb(0, 129, 123);
-    font-weight: bold;
-    text-decoration: underline;
+  color: rgb(0, 129, 123);
+  font-weight: bold;
+  text-decoration: underline;
 }
 
 .flexy {
-    display: flex;
+  display: flex;
 }
 
 .gone {
-    display: none;
+  display: none;
 }
 
 .project {
-    background-color: white;
-    width: 90%;
-    height: 90%;
-    flex-direction: column;
+  background-color: white;
+  width: 90%;
+  height: 90%;
+  flex-direction: column;
 }
 
 .detail-box {
-    background: rgb(148, 212, 210);
-    border: 1px solid transparent;
+  background: rgb(148, 212, 210);
+  border: 1px solid transparent;
 }
 
 .project-button-div {
-    display: flex;
-    justify-content: space-between;
-    margin: 10px 10px 0px 10px;
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 10px 0px 10px;
 }
 
 button {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .delete-button {
-    font-size: 16px;
-    border-radius: 50%;
-    padding: 5px;
-    color: white;
-    background-color: rgb(0, 88, 84);
-    font-weight: bold;
+  font-size: 16px;
+  border-radius: 50%;
+  padding: 5px;
+  color: white;
+  background-color: rgb(0, 88, 84);
+  font-weight: bold;
 }
 
 .edit-button {
-    font-size: 16px;
-    background-color: white;
-    border-radius: 50%;
-    padding: 5px;
+  font-size: 16px;
+  background-color: white;
+  border-radius: 50%;
+  padding: 5px;
 }
 
 .title-label-div {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    border-bottom: 2px solid rgb(0, 97, 92);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 2px solid rgb(0, 97, 92);
 }
 
 .project-title {
-    text-align: center;
-    grid-column: 2 / 3;
+  text-align: center;
+  grid-column: 2 / 3;
 }
 
 .project-label {
-    background-color: rgb(0, 97, 92);
-    color: white;
-    grid-column: 3 / 4;
-    display: flex;
-    align-items: center;
-    width: fit-content;
-    padding: 5px;
-    margin-bottom: 2px;
-    border-radius: 50px;
+  background-color: rgb(0, 97, 92);
+  color: white;
+  grid-column: 3 / 4;
+  display: flex;
+  align-self: center;
+  justify-self: center;
+  width: fit-content;
+  padding: 5px;
+  margin-bottom: 2px;
+  border-radius: 50px;
+  max-height: 30px;
+}
+
+.label-color {
+  background-color: rgb(0, 97, 92);
+  color: white;
+}
+
+.no-label-color {
+  background-color: transparent;
 }
 
 .all-property-div {
-    display: flex;
-    flex-direction: row;
-    height: 40px;
+  display: flex;
+  flex-direction: row;
+  height: 40px;
 }
 
 .property-box {
-    display: flex;
-    flex-direction: row;
-    flex: 1;
-    gap: 0.25rem;
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  gap: 0.25rem;
 }
 
 .property-box:first-child {
-    flex: 3;
+  cursor: pointer;
+  background-color: rgb(92, 194, 190);
+  border-radius: 25px;
+  text-decoration: underline;
+}
+
+.property-box:first-child:hover {
+  background-color: teal;
+  color: white;
 }
 
 .property-header {
-    flex: 1;
-    font-size: 14px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
+  flex: 1;
+  font-size: 14px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .project-p {
-    font-size: 14px;
-    height: 100%;
-    display: flex;
-    margin: 0 5px;
+  font-size: 14px;
+  height: 100%;
+  display: flex;
+  margin: 0 5px;
+}
+
+.description-modal {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 97, 92, 0.5);
+}
+
+.description-box {
+  width: 300px;
+  padding: 10px;
 }
 
 .project-description {
-    flex: 4;
-    display: flex;
-    align-items: center;
-    height: 100%;
+  flex: 4;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  overflow-y: hidden;
+  padding-bottom: 20px;
 }
 
 .too-much-text {
-    overflow-y: scroll;
-    align-items: flex-start;
+  overflow-y: scroll;
+  align-items: flex-start;
 }
 
 .project-due-date {
-    flex: 1;
-    display: flex;
-    align-items: center;
+  flex: 1;
+  display: flex;
+  align-items: center;
 }
 
 .project-priority {
-    flex: 1;
-    display: flex;
-    align-items: center;
+  flex: 1;
+  display: flex;
+  align-items: center;
 }
 
 .task-box {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .task-area-container {
-    display: flex;
-    flex: 10;
-    overflow-y: auto;
-    min-height: 0;
+  display: flex;
+  flex: 10;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .task-area {
-    flex: 1;
+  flex: 1;
 }
 
 .task-button-box {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .add-button {
-    font-size: 16px;
-    background-color: rgb(148, 212, 210);
-    padding: 5px;
+  font-size: 16px;
+  background-color: rgb(148, 212, 210);
+  padding: 5px;
 }
 
 .transparent-box {
-    width: 100vw;
-    height: 100vh;
-    margin: 0;
-    position: absolute;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0, 97, 92, 0.500);
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 97, 92, 0.5);
 }
 
-.form-container, .delete-form-container {
-    background-color: white;
-    border: 5px solid rgb(0, 97, 92);
-    border-radius: 25px;
-    display: flex;
-    flex-direction: column;
+.form-container,
+.delete-form-container,
+.description-box {
+  background-color: white;
+  border: 5px solid rgb(0, 97, 92);
+  border-radius: 25px;
+  display: flex;
+  flex-direction: column;
 }
 
 .form-container {
-    width: 55%;
-    height: 55%;
+  width: 55%;
+  height: 55%;
 }
 
 .delete-form-container {
-    width: 30%;
+  width: 30%;
 }
 
 form {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 fieldset {
-    flex: 1;
-    margin: 3%;
-    display: flex;
-    flex-direction: column;
-    border: none;
+  flex: 1;
+  margin: 3%;
+  display: flex;
+  flex-direction: column;
+  border: none;
 }
 
 legend {
-     font-size: 2rem;
-     font-weight: bold;
-     color: rgb(0, 97, 92);
-     margin-bottom: 20px;
+  font-size: 2rem;
+  font-weight: bold;
+  color: rgb(0, 97, 92);
+  margin-bottom: 20px;
 }
 
 .form-property-box {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .form-property-div {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .labels {
-    width: 25%;
-    font-size: 18px;
-    text-align: right;
-    font-weight: bold;
-    color: rgb(0, 97, 92);
+  width: 25%;
+  font-size: 18px;
+  text-align: right;
+  font-weight: bold;
+  color: rgb(0, 97, 92);
 }
 
-.regular-input, .textarea {
-    width: 75%;
-    font-size: 18px;
-    padding-left: 0.25rem;
-    border: 1px solid rgb(0, 97, 92);
+.regular-input,
+.textarea {
+  width: 75%;
+  font-size: 18px;
+  padding-left: 0.25rem;
+  border: 1px solid rgb(0, 97, 92);
 }
 
 .textarea {
-    height: 100px;
+  height: 100px;
 }
 
 .drop-box {
-    width: 250px;
-    text-align: center;
-    font-size: 18px;
-    border: 1px solid rgb(0, 97, 92);
-    background-color: white;
+  width: 250px;
+  text-align: center;
+  font-size: 18px;
+  border: 1px solid rgb(0, 97, 92);
+  background-color: white;
 }
 
 .form-button-box {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 100px;
 }
 
 .cancel-button {
-    font-size: 16px;
-    background-color: gray;
-    color: white;
-    padding: 5px;
+  font-size: 16px;
+  background-color: gray;
+  color: white;
+  padding: 5px;
 }
 
 .submit-button {
-    font-size: 16px;
-    background-color: rgb(148, 212, 210);
-    padding: 5px;
+  font-size: 16px;
+  background-color: rgb(148, 212, 210);
+  padding: 5px;
 }
 
 .error-input {
-    border-color: red;
-    border-width: 2px;
+  border-color: red;
+  border-width: 2px;
 }
 
 @media (height < 645px) {
-    .form-container {
-        height: 369px;
-    }
+  .form-container {
+    height: 369px;
+  }
 }
 
 @media (height < 620px) and (width < 550px) {
-    .form-container {
-        height: 100%;
-        width: 100%;
-        border-radius: 0;
-        flex: 1;
-    }
+  .form-container {
+    height: 100%;
+    width: 100%;
+    border-radius: 0;
+    flex: 1;
+  }
 
-    .transparent-box {
-        justify-content: flex-start;
-        align-items: flex-start;
-    }
+  .transparent-box {
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
 }
 
 @media (width < 950px) {
-    .form-container {
-        width: 513px;
-    }
+  .form-container {
+    width: 513px;
+  }
 }

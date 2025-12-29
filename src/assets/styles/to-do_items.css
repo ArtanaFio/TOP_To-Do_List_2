@@ -1,136 +1,135 @@
 .full-task-box {
-    border: 2px solid transparent;
-    
+  border: 2px solid transparent;
 }
 
 .full-task-box:hover {
-    border-color: rgb(0, 97, 92);
+  border-color: rgb(0, 97, 92);
 }
 
 .task {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    height: 35px;
-    align-items: center;
-    padding-left: 26px;
-    cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 35px;
+  align-items: center;
+  padding-left: 26px;
+  cursor: pointer;
 }
 
 .task-hover {
-    background-color: rgb(235, 255, 254);
+  background-color: rgb(235, 255, 254);
 }
 
 .main-box {
-    display: flex;
-    flex: 5;
-    align-items: center;
-    height: 100%;
+  display: flex;
+  flex: 5;
+  align-items: center;
+  height: 100%;
 }
 
 .mini-button-box {
-    flex: 1;
-    display: flex;
-    gap: 5px;
+  flex: 1;
+  display: flex;
+  gap: 5px;
 }
 
 .hidden-box {
-    padding-left: 56px;
-    border-top: 2px solid rgb(0, 97, 92);
+  padding-left: 56px;
+  border-top: 2px solid rgb(0, 97, 92);
 }
 
 .left {
-    flex: 2;
+  flex: 2;
 }
 
 .right {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .date-label {
-    padding-right: 2px;
+  padding-right: 2px;
 }
 
 .hidden-label {
-    font-size: 16px;
-    text-decoration: underline;
-    display: flex;
-    align-items: flex-end;
-    padding-right: 5px;
+  font-size: 16px;
+  text-decoration: underline;
+  display: flex;
+  align-items: flex-end;
+  padding-right: 5px;
 }
 
 .priority-id {
-    font-size: 16px;
-    color: rgb(0, 97, 92);
-    display: flex;
-    align-items: flex-end;
+  font-size: 16px;
+  color: rgb(0, 97, 92);
+  display: flex;
+  align-items: flex-end;
 }
 
 .empty-circle {
-    border: 2px solid rgb(0, 97, 92);
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
+  border: 2px solid rgb(0, 97, 92);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
 }
 
 .full-circle {
-    border: 2px solid rgb(0, 97, 92);
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
-    background-color: rgb(0, 97, 92);
+  border: 2px solid rgb(0, 97, 92);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  background-color: rgb(0, 97, 92);
 }
 
 .strike-through {
-    text-decoration: line-through;
+  text-decoration: line-through;
 }
 
 .empty-circle:hover {
-    border-width: 4px;
+  border-width: 4px;
 }
 
 .existing-property {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 .date-id {
-    font-size: 14px;
-    font-weight: bold;
-    font-style: italic;
-    color: black;
-    display: flex;
-    align-items: center;
+  font-size: 14px;
+  font-weight: bold;
+  font-style: italic;
+  color: black;
+  display: flex;
+  align-items: center;
 }
 
 .task-text {
-    font-size: 16px;
-    color: rgb(0, 97, 92);
-    display: flex;
-    align-items: center;
+  font-size: 16px;
+  color: rgb(0, 97, 92);
+  display: flex;
+  align-items: center;
 }
 
 .task-edit-button {
-    background-color: rgb(0, 219, 208);
-    padding: 3px;
-    border-radius: 50%;
+  background-color: rgb(0, 219, 208);
+  padding: 3px;
+  border-radius: 50%;
 }
 
 .task-edit-button:hover {
-    background-color: rgb(235, 255, 254);
+  background-color: rgb(235, 255, 254);
 }
 
 .task-delete-button {
-    font-weight: bold;
-    padding: 3px;
-    border-radius: 50%;
-    background-color: rgb(0, 97, 92);
-    color: white;
+  font-weight: bold;
+  padding: 3px;
+  border-radius: 50%;
+  background-color: rgb(0, 97, 92);
+  color: white;
 }
 
 .task-delete-button:hover {
-    background-color: rgb(0, 148, 141);
+  background-color: rgb(0, 148, 141);
 }

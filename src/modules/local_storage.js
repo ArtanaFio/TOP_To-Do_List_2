@@ -1,63 +1,61 @@
-const project_key = 'Projects';
+const project_key = "Projects";
 
 export function getProjects() {
-    return JSON.parse(localStorage.getItem(project_key));
-};
+  return JSON.parse(localStorage.getItem(project_key));
+}
 
 export function fillTaskStorage(storage_key, taskArray, convertDate) {
-    let newTaskArray = [];
-    let taskDueDate;
+  let newTaskArray = [];
+  let taskDueDate;
 
-    taskArray.forEach (taskObject => {
-        if (taskObject.dueDate) {
-            taskDueDate = convertDate(taskObject.dueDate);
-        } else {
-            taskDueDate = '';
-        }
+  taskArray.forEach((taskObject) => {
+    if (taskObject.dueDate) {
+      taskDueDate = convertDate(taskObject.dueDate);
+    } else {
+      taskDueDate = "";
+    }
 
-        const translatedTask = {
-            title: taskObject.title,
-            description: taskObject.description,
-            dueDate: taskDueDate,
-            priority: taskObject.priority
-        }
-        newTaskArray.push(translatedTask);
-    });
-        
-    localStorage.setItem(storage_key, JSON.stringify(newTaskArray));
-};
+    const translatedTask = {
+      title: taskObject.title,
+      description: taskObject.description,
+      dueDate: taskDueDate,
+      priority: taskObject.priority,
+    };
+    newTaskArray.push(translatedTask);
+  });
 
+  localStorage.setItem(storage_key, JSON.stringify(newTaskArray));
+}
 
 export function fillProjectStorage(projectArray, convertDate) {
-    let newProjectArray = [];
-    
-    projectArray.forEach(projectObject => {
-        let dueDate;
-        if (projectObject.dueDate) {
-            dueDate = convertDate(projectObject.dueDate);
-        } else {
-            dueDate = projectObject.dueDate;
-        }
+  let newProjectArray = [];
 
-        const translatedProject = {
-            title: projectObject.title,
-            description: projectObject.description,
-            dueDate: dueDate,
-            priority: projectObject.priority,
-            label: projectObject.label
-        }
+  projectArray.forEach((projectObject) => {
+    let dueDate;
+    if (projectObject.dueDate) {
+      dueDate = convertDate(projectObject.dueDate);
+    } else {
+      dueDate = projectObject.dueDate;
+    }
 
-        newProjectArray.push(translatedProject);
-    });
+    const translatedProject = {
+      title: projectObject.title,
+      description: projectObject.description,
+      dueDate: dueDate,
+      priority: projectObject.priority,
+      label: projectObject.label,
+    };
 
-    localStorage.setItem(project_key, JSON.stringify(newProjectArray));
-};
+    newProjectArray.push(translatedProject);
+  });
 
+  localStorage.setItem(project_key, JSON.stringify(newProjectArray));
+}
 
 export function getTasks(task_key) {
-    return JSON.parse(localStorage.getItem(task_key));
-};
+  return JSON.parse(localStorage.getItem(task_key));
+}
 
 export function deleteTaskStorage(storage_key) {
-    localStorage.removeItem(storage_key);
-};
+  localStorage.removeItem(storage_key);
+}

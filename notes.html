@@ -1,83 +1,315 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
+  </head>
+  <body>
     <ul>
-        <li>might have to reconsider how we set up the backendManager() and defaultProject to work with everything that is the user interface</li>
-        <li>10/6 finish initial css styling for project. Will clean up/improve styling later after connecting backend functions to frontend elements</li>
-        <li>10/7 need to rethink my create/display project functions to think of how the close function should work because I want to create a generic project and populate it with the specific selected project information</li>
-        <li>10/9 come back to function displayEditForm's input values. Look at function createProject's edit button's event listener. Trying to populate the form's inputs with the right information</li>
-        <li>fix dateForInput because it's not updating the due date on the edit form</li>
-        <li>11/17 work on editFrontEndProject() to get all the values to edit the project</li>
-        <li>11/18 now work on editing the backend default project</li>
-        <li>move some things out of panelList() because that function should not handle so many different things</li>
-        <li>11/20 go back to selectProject and figure out how to get the function to correctly select the corresponding backend project instead of just feeding in defaultProject</li>
-        <li>11/21 now finish working on submitProjectEdits to edit the backend</li>
-        <li>11/21 fix createProjectEditForm labelbox options because we do not want a not-option and we also want to display the correct label in the fill function</li>
-        <li>11/24 inside submitProjectEdits, figure out how to set up editBackendProject</li>
-        <li>had created applyProjectSelectionStyling() to only handle styling that was originally in selectProject(), and deconstructed submitProjectEdits to move the event listener on the submit button directly to the entry point.</li>
-        <li>11/25 Something is wrong with backEndProjectManager().createBackendProject. Whenever I submit a new project, it creates a new default project before the one I specified</li>
-        <li>11/25 the panel list also will not let me select the new project</li>
-        <li>11/25 replaced the querySelectorAll('project-name') variable with event delegation to handle dynamic element changes since querSelectorAll is static and only captures elements at that specific point in the code</li>
-        <li>11/25 fix the date format. Uncaught runtime error happens when I click the edit button on the new project. Uncaught error: Cannot read properties of null(reading "getFullYear")at utility.js:33 - - -> dateForInput (utility.js:33:1), at fillProjectEditForm (projects.DOM.js:218:1), at eval (projects_DOM.js:49:1), at Array.forEach(anonymous), at HTMLButtonElement.eval (projects_DOM.js:46:1)</li>
-        <li>11/26 edits made to the default project are being treated like new projects and are being added to MASTER_STORAGE as the 0 index instead of adding to the end of the array</li>
-        <li>11/26 decide to turn backendProjectManager into either a singleton or IIFE</li>
-        <li>11/28 turned the function backendProjectManager() into the singleton backendService to ensure only one instance of the backend state exists and is called</li>
-        <li>11/28 changed "closeNewProjectForm" into "closeForm" so that I can use it with the deleteProjectForm</li>
-        <li>11/28 need to find the function that closes the project and add it to the yesButton. Need to write function to delete front end and connect it to the backend</li>
-        <li>11/28 began writing up the frontend delete project function. Need to remove unnecessary console messages and then connect the backend delete project function</li>
-        <li>11/28 fix the uncaught typeerror: cannot read properties of undefined (reading textContent) for trying to delete the backend using the panelList.children[i].textContent</li>
-        <li>11/30 used array.find to get the backend project to match the frontend project for deletion</li>
-        <li>11/30 need to unapply select stying to previously selected project whenever user selects a new project without closing the project first and update the project Interface details</li>
-        <li>12/1 updated applyProjectSelectionStyling to ensure only one project has 'selected' styling at a time to prevent confusion and incorrect selection</li>
-        <li>12/1 replaced openProjectEditForm, displayProjectEditForm, and closeProjectEditForm functions because openForm and closeForm are sufficient</li>
-        <li>12/1 moved openForm, closeForm, and clearInputs into DOM_basic_functions because these will be used by both projects and tasks</li>
-        <li>12/1 got the edit form to display mm/dd/yyyy when there due date is null for</li>
-        <li>12/1 successfully creates backend tasks in the correct backend Project and started apply the frontend for tasks</li>
-        <li>12/1 successfully removed all frontend tasks when closing the project by using a while loop and .removeChild property</li>
-        <li>12/2 created applyExistingTasks to reapply tasks on the frontend based on the backend information</li>
-        <li>12/2 added date conversion functions to display task due dates in the correct format</li>
-        <li>12/2 updated convertCalendarDate so that the output has the same format as convertDate</li>
-        <li>12/2 created task edit and delete buttons</li>
-        <li>12/4 created task edit form</li>
-        <li>12/4 edited dateForInput to display single digit days too so that the edit form can display the correct date</li>
-        <li>12/4 got the fill-tasks function to work</li>
-        <li>12/4 applied add/remove error styling for tasks</li>
-        <li>12/4 wrote editFrontEndTask</li>
-        <li>12/5 replaced event listener with onclick on the task edit form button to prevent rewriting multiple tasks at once</li>
-        <li>12/7 fixed the spacing problem on task properties</li>
-        <li>12/7 fixed issue: if I select a new project without closing the old project, the taskArea still contains the old tasks and adds the selected project tasks</li>
-        <li>12/7 updated editFrontendTask to handle spacing, updated fillTaskEditDetails so dateForInput function is only ran if date exists</li>
-        <li>12/7 fixed the newest task buttons not working by first removing all tasks from task area and using applyExistingTasks to apply all tasks after creating the new task in the backend. Did not need createFrontendTask. Have removed it.</li>
-        <li>12/7 added a for loop to find the correct panelList child to update display the new title for the edited project</li>
-        <li>12/8 implemented task deletion using array.find() to find the task I wanted to delete, and array.findIndex() to find its index and then applied backendService.deleteBackendTask, while loop to remove all tasks from task area, and applyExistingTasks to show only the tasks that hadn't been deleted</li>
-        
-        <li>12/9 prevented the left-panel from stretching and implemented scrolling when the panel list contain overflows</li>
-        <li>12/9 prevented the project from stretching and implemented scrolling when the task area overflows</li>
-        <li>12/9 used media queries to adjust the form dimensions when the viewport shrinks exceptionally smaller</li>
-        <li>12/10 redesigned task layout to only display title and due date. User clicks to expand task details and see buttons</li>
-        <li>12/10 redesigned the edit tasks function to work with the new task layout</li>
-        <li>12/12 got the task to expand and redid task-striking</li>
-        <li>12/12 fixed the frontend labeling of projects by specifying condition in fillNewProjectList</li>
-        <li>12/12 displayed defaultProject after deleting project instead of closing the project interface</li>
-        <li>12/12 removed the project close button and its associated functions because there was no point to close the project interface</li>
-        <li>12/12 moved the project delete button to the right side where the close button used to be</li>
-        <li>12/13 created singleWhitespace() to remove extra spaces between letters and other measures to prevent creating projects and tasks with the same name</li>
-        <li>12/13 made sure the cancel buttons also removed error styling</li>
-        <li>12/17 when I refresh the page after adding a new project's task, I'm getting uncaught typeError: longDate.getFullYear is not a function at convertDate (utility.js 26:1), applyExistingTasks(to-do_items_DOM.js 69:1), index.js:153:39,152:1,144:20</li>
-        <li>this tells me there's a problem with displaying tasks using applyExistingTasks at panelList event listener when I click on the project to display it.</li>
-        <li>inside applyExistingTasks at line 69 is where I'm trying to to display the due date as convertDate(backendTask.dueDate)</li>
-        <li>the problem that I see is that the backend task saved the due date as a string instead of a date object</li>
+      <li>
+        might have to reconsider how we set up the backendManager() and
+        defaultProject to work with everything that is the user interface
+      </li>
+      <li>
+        10/6 finish initial css styling for project. Will clean up/improve
+        styling later after connecting backend functions to frontend elements
+      </li>
+      <li>
+        10/7 need to rethink my create/display project functions to think of how
+        the close function should work because I want to create a generic
+        project and populate it with the specific selected project information
+      </li>
+      <li>
+        10/9 come back to function displayEditForm's input values. Look at
+        function createProject's edit button's event listener. Trying to
+        populate the form's inputs with the right information
+      </li>
+      <li>
+        fix dateForInput because it's not updating the due date on the edit form
+      </li>
+      <li>
+        11/17 work on editFrontEndProject() to get all the values to edit the
+        project
+      </li>
+      <li>11/18 now work on editing the backend default project</li>
+      <li>
+        move some things out of panelList() because that function should not
+        handle so many different things
+      </li>
+      <li>
+        11/20 go back to selectProject and figure out how to get the function to
+        correctly select the corresponding backend project instead of just
+        feeding in defaultProject
+      </li>
+      <li>
+        11/21 now finish working on submitProjectEdits to edit the backend
+      </li>
+      <li>
+        11/21 fix createProjectEditForm labelbox options because we do not want
+        a not-option and we also want to display the correct label in the fill
+        function
+      </li>
+      <li>
+        11/24 inside submitProjectEdits, figure out how to set up
+        editBackendProject
+      </li>
+      <li>
+        had created applyProjectSelectionStyling() to only handle styling that
+        was originally in selectProject(), and deconstructed submitProjectEdits
+        to move the event listener on the submit button directly to the entry
+        point.
+      </li>
+      <li>
+        11/25 Something is wrong with
+        backEndProjectManager().createBackendProject. Whenever I submit a new
+        project, it creates a new default project before the one I specified
+      </li>
+      <li>11/25 the panel list also will not let me select the new project</li>
+      <li>
+        11/25 replaced the querySelectorAll('project-name') variable with event
+        delegation to handle dynamic element changes since querSelectorAll is
+        static and only captures elements at that specific point in the code
+      </li>
+      <li>
+        11/25 fix the date format. Uncaught runtime error happens when I click
+        the edit button on the new project. Uncaught error: Cannot read
+        properties of null(reading "getFullYear")at utility.js:33 - - ->
+        dateForInput (utility.js:33:1), at fillProjectEditForm
+        (projects.DOM.js:218:1), at eval (projects_DOM.js:49:1), at
+        Array.forEach(anonymous), at HTMLButtonElement.eval
+        (projects_DOM.js:46:1)
+      </li>
+      <li>
+        11/26 edits made to the default project are being treated like new
+        projects and are being added to MASTER_STORAGE as the 0 index instead of
+        adding to the end of the array
+      </li>
+      <li>
+        11/26 decide to turn backendProjectManager into either a singleton or
+        IIFE
+      </li>
+      <li>
+        11/28 turned the function backendProjectManager() into the singleton
+        backendService to ensure only one instance of the backend state exists
+        and is called
+      </li>
+      <li>
+        11/28 changed "closeNewProjectForm" into "closeForm" so that I can use
+        it with the deleteProjectForm
+      </li>
+      <li>
+        11/28 need to find the function that closes the project and add it to
+        the yesButton. Need to write function to delete front end and connect it
+        to the backend
+      </li>
+      <li>
+        11/28 began writing up the frontend delete project function. Need to
+        remove unnecessary console messages and then connect the backend delete
+        project function
+      </li>
+      <li>
+        11/28 fix the uncaught typeerror: cannot read properties of undefined
+        (reading textContent) for trying to delete the backend using the
+        panelList.children[i].textContent
+      </li>
+      <li>
+        11/30 used array.find to get the backend project to match the frontend
+        project for deletion
+      </li>
+      <li>
+        11/30 need to unapply select stying to previously selected project
+        whenever user selects a new project without closing the project first
+        and update the project Interface details
+      </li>
+      <li>
+        12/1 updated applyProjectSelectionStyling to ensure only one project has
+        'selected' styling at a time to prevent confusion and incorrect
+        selection
+      </li>
+      <li>
+        12/1 replaced openProjectEditForm, displayProjectEditForm, and
+        closeProjectEditForm functions because openForm and closeForm are
+        sufficient
+      </li>
+      <li>
+        12/1 moved openForm, closeForm, and clearInputs into DOM_basic_functions
+        because these will be used by both projects and tasks
+      </li>
+      <li>
+        12/1 got the edit form to display mm/dd/yyyy when there due date is null
+        for
+      </li>
+      <li>
+        12/1 successfully creates backend tasks in the correct backend Project
+        and started apply the frontend for tasks
+      </li>
+      <li>
+        12/1 successfully removed all frontend tasks when closing the project by
+        using a while loop and .removeChild property
+      </li>
+      <li>
+        12/2 created applyExistingTasks to reapply tasks on the frontend based
+        on the backend information
+      </li>
+      <li>
+        12/2 added date conversion functions to display task due dates in the
+        correct format
+      </li>
+      <li>
+        12/2 updated convertCalendarDate so that the output has the same format
+        as convertDate
+      </li>
+      <li>12/2 created task edit and delete buttons</li>
+      <li>12/4 created task edit form</li>
+      <li>
+        12/4 edited dateForInput to display single digit days too so that the
+        edit form can display the correct date
+      </li>
+      <li>12/4 got the fill-tasks function to work</li>
+      <li>12/4 applied add/remove error styling for tasks</li>
+      <li>12/4 wrote editFrontEndTask</li>
+      <li>
+        12/5 replaced event listener with onclick on the task edit form button
+        to prevent rewriting multiple tasks at once
+      </li>
+      <li>12/7 fixed the spacing problem on task properties</li>
+      <li>
+        12/7 fixed issue: if I select a new project without closing the old
+        project, the taskArea still contains the old tasks and adds the selected
+        project tasks
+      </li>
+      <li>
+        12/7 updated editFrontendTask to handle spacing, updated
+        fillTaskEditDetails so dateForInput function is only ran if date exists
+      </li>
+      <li>
+        12/7 fixed the newest task buttons not working by first removing all
+        tasks from task area and using applyExistingTasks to apply all tasks
+        after creating the new task in the backend. Did not need
+        createFrontendTask. Have removed it.
+      </li>
+      <li>
+        12/7 added a for loop to find the correct panelList child to update
+        display the new title for the edited project
+      </li>
+      <li>
+        12/8 implemented task deletion using array.find() to find the task I
+        wanted to delete, and array.findIndex() to find its index and then
+        applied backendService.deleteBackendTask, while loop to remove all tasks
+        from task area, and applyExistingTasks to show only the tasks that
+        hadn't been deleted
+      </li>
 
-        <li>12/15 applying localStorage functions. Had to edit dueDate format in storeProject() to get it to convert back to a makeProject object later</li>
-        <li>12/16 adjusted fillStorage() to accept an array as parameter so that I could just add makeProject.MASTER_STORAGE. It was easier and ensures the backend projects are properly added/stored in local storage</li>
-        <li>12/18 created fillTaskStorage and specified variables to create custom storage keys for each project-s task array</li>
-        <li>12/19 created getTasks and deleteTaskStorage to remove task storage keys associated with deleted projects.</li>
-        
+      <li>
+        12/9 prevented the left-panel from stretching and implemented scrolling
+        when the panel list contain overflows
+      </li>
+      <li>
+        12/9 prevented the project from stretching and implemented scrolling
+        when the task area overflows
+      </li>
+      <li>
+        12/9 used media queries to adjust the form dimensions when the viewport
+        shrinks exceptionally smaller
+      </li>
+      <li>
+        12/10 redesigned task layout to only display title and due date. User
+        clicks to expand task details and see buttons
+      </li>
+      <li>
+        12/10 redesigned the edit tasks function to work with the new task
+        layout
+      </li>
+      <li>12/12 got the task to expand and redid task-striking</li>
+      <li>
+        12/12 fixed the frontend labeling of projects by specifying condition in
+        fillNewProjectList
+      </li>
+      <li>
+        12/12 displayed defaultProject after deleting project instead of closing
+        the project interface
+      </li>
+      <li>
+        12/12 removed the project close button and its associated functions
+        because there was no point to close the project interface
+      </li>
+      <li>
+        12/12 moved the project delete button to the right side where the close
+        button used to be
+      </li>
+      <li>
+        12/13 created singleWhitespace() to remove extra spaces between letters
+        and other measures to prevent creating projects and tasks with the same
+        name
+      </li>
+      <li>12/13 made sure the cancel buttons also removed error styling</li>
+      <li>
+        12/17 when I refresh the page after adding a new project's task, I'm
+        getting uncaught typeError: longDate.getFullYear is not a function at
+        convertDate (utility.js 26:1), applyExistingTasks(to-do_items_DOM.js
+        69:1), index.js:153:39,152:1,144:20
+      </li>
+      <li>
+        this tells me there's a problem with displaying tasks using
+        applyExistingTasks at panelList event listener when I click on the
+        project to display it.
+      </li>
+      <li>
+        inside applyExistingTasks at line 69 is where I'm trying to to display
+        the due date as convertDate(backendTask.dueDate)
+      </li>
+      <li>
+        the problem that I see is that the backend task saved the due date as a
+        string instead of a date object
+      </li>
+      <li>
+        12/15 applying localStorage functions. Had to edit dueDate format in
+        storeProject() to get it to convert back to a makeProject object later
+      </li>
+      <li>
+        12/16 adjusted fillStorage() to accept an array as parameter so that I
+        could just add makeProject.MASTER_STORAGE. It was easier and ensures the
+        backend projects are properly added/stored in local storage
+      </li>
+      <li>
+        12/18 created fillTaskStorage and specified variables to create custom
+        storage keys for each project-s task array
+      </li>
+      <li>
+        12/19 created getTasks and deleteTaskStorage to remove task storage keys
+        associated with deleted projects.
+      </li>
+      <br />
+      <li>
+        12/20 applied another condition to prevent projectEditForm from passing
+        duplicate project titles
+      </li>
+      <li>
+        12/20removed condition excluding default project tasks from being added
+        from local storage to repopulate backend since I removed test tasks
+      </li>
+      <li>12/26 edited function titleCase to follow actual titleCase rules</li>
+      <li>
+        12/26 edited the backend code's if statements and for loop to allow the
+        default project edits to persist
+      </li>
+      <li>
+        12/29 prevented the error styling showing up when user didn't edit the
+        project title by using a condition
+      </li>
+      <li>
+        12/29 prevented the project edit form from editing all projects at once
+        by using conditions
+      </li>
+      <li>
+        12/29 updated styling for project label and description to only show
+        label if there is one and to better display longer descriptions.
+      </li>
+      <li>
+        12/29 replaced lowerCase function with sentenceCase function for
+        description to format them like one sentence.
+      </li>
     </ul>
-</body>
+  </body>
 </html>
