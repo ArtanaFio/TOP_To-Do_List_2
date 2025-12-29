@@ -378,12 +378,15 @@ export function editFrontendTask(
   newPriority,
   editForm,
   titleCase,
+  sentenceCase,
   trim,
   convertCalendarDate
 ) {
   frontendTask[1].textContent = titleCase(trim(editForm.titleInput.value));
   if (editForm.descriptionInput.value !== "") {
-    newDescription.textContent = editForm.descriptionInput.value;
+    newDescription.textContent = sentenceCase(
+      trim(editForm.descriptionInput.value)
+    );
   } else if (editForm.descriptionInput.value === "") {
     newDescription.textContent = "none";
   }

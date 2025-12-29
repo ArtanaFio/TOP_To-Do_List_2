@@ -96,7 +96,7 @@ const backendService = (function () {
 
   function createBackendTask(title, description, dueDate, priority, project) {
     const properTitle = titleCase(trim(title));
-    const properDescription = lowerCase(trim(description));
+    const properDescription = sentenceCase(trim(description));
 
     const task = new makeTodoItem(
       properTitle,
@@ -158,22 +158,6 @@ const backendService = (function () {
     }
   }
 
-  if (process.env.NODE_ENV === "development") {
-    window.titleCase = titleCase;
-    window.lowerCase = lowerCase;
-    window.trim = trim;
-    window.getTodayDate = getTodayDate;
-    window.makeProject = makeProject;
-    window.makeTodoItem = makeTodoItem;
-    window.createBackendProject = createBackendProject;
-    window.editBackendProject = editBackendProject;
-    window.deleteBackendProject = deleteBackendProject;
-    window.createBackendTask = createBackendTask;
-    window.editBackendTask = editBackendTask;
-    window.deleteBackEndTask = deleteBackEndTask;
-    window.defaultProject = defaultProject;
-  }
-
   return {
     createBackendProject,
     editBackendProject,
@@ -189,7 +173,6 @@ function userInterface() {
   const pageSpace = document.getElementById("page-space");
   const pageLayout = createPageLayout(pageSpace);
   const panelList = createPanelList(pageLayout.leftPanelContainer);
-  //const defaultProject = backendService.defaultProject;
   const projectEditForm = createProjectEditForm(document.body);
   const projectInterface = createProject(
     pageLayout.rightPanel,
@@ -545,6 +528,7 @@ function userInterface() {
                     .children[1].children[1],
                   taskEditForm,
                   titleCase,
+                  sentenceCase,
                   trim,
                   convertCalendarDate
                 );

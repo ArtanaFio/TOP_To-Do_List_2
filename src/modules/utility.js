@@ -109,7 +109,6 @@ export function singleWhitespace(string) {
 
 export function sentenceCase(string) {
   const wordArray = string.split(" ").map((word) => word.toLowerCase());
-  console.log(wordArray);
   const newArray = [];
 
   for (let i = 0; i < wordArray.length; i++) {
@@ -122,9 +121,12 @@ export function sentenceCase(string) {
     if (i > 0 && wordArray[i - 1].endsWith(".")) {
       word = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     }
+
+    if (word === "i") {
+      word = word.charAt(0).toUpperCase();
+    }
     newArray.push(word);
   }
   const newSentence = newArray.join(" ");
-  console.log(`'${newSentence}'`);
   return newSentence;
 }
